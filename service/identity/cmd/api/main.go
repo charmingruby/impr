@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/charmingruby/impr/service/gateway/config"
-	"github.com/charmingruby/impr/service/gateway/internal/transport/rest"
+	"github.com/charmingruby/impr/service/identity/config"
+	"github.com/charmingruby/impr/service/identity/internal/shared/transport/rest"
 	"github.com/labstack/echo/v4"
 )
 
