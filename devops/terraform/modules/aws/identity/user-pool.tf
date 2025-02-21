@@ -27,33 +27,34 @@ resource "aws_cognito_user_pool" "this" {
 
   schema {
     attribute_data_type = "String"
-    mutable             = true
     name                = "given_name"
-    required            = false
+    required            = true
+    mutable             = true
+
     string_attribute_constraints {
       min_length = 1
-      max_length = 2048
+      max_length = 256
     }
   }
 
   schema {
     attribute_data_type = "String"
-    mutable             = true
     name                = "family_name"
-    required            = false
+    required            = true
+    mutable             = true
+
     string_attribute_constraints {
       min_length = 1
-      max_length = 2048
+      max_length = 256
     }
   }
 
   schema {
-    attribute_data_type = "DateTime"
-    mutable             = true
+    attribute_data_type = "String"
     name                = "birthdate"
-    required            = false
+    required            = true
+    mutable             = true
   }
-
 
   tags = merge(var.tags, {
     "Name" = "${var.tags.project}-${var.tags.environment}-user-pool"
