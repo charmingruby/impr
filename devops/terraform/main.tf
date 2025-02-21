@@ -1,5 +1,9 @@
-# module "remote-state" {
-#   source = "./modules/aws/remote-state"
+module "remote-state" {
+  source = "./modules/aws/remote-state"
+  tags   = local.tags
+}
 
-#   project = var.project
-# }
+module "identity" {
+  source = "./modules/aws/identity"
+  tags   = local.tags
+}
