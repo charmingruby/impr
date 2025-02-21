@@ -1,7 +1,0 @@
-name: impr
-description: Real time polling project, created to practice some tech concepts.
-runtime: go
-config:
-  pulumi:tags:
-    value:
-      pulumi:template: Go
