@@ -4,10 +4,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/charmingruby/impr/lib/pkg/awsc"
+	"github.com/charmingruby/impr/lib/pkg/integration"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
-	"github.com/charmingruby/impr/service/identity/pkg/awsc"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
-	"github.com/charmingruby/impr/service/identity/pkg/integration"
 )
 
 type CognitoIdentityProvider struct {

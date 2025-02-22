@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
+	"github.com/charmingruby/impr/lib/pkg/awsc"
+	"github.com/charmingruby/impr/lib/pkg/rest"
 	"github.com/charmingruby/impr/service/identity/config"
-	"github.com/charmingruby/impr/service/identity/internal/shared/transport/rest"
-	"github.com/charmingruby/impr/service/identity/pkg/awsc"
 	"github.com/charmingruby/impr/service/identity/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
