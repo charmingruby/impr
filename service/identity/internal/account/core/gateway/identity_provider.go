@@ -29,12 +29,18 @@ type SignInOutput struct {
 	RefreshToken string
 }
 
+type ResetPasswordInput struct {
+	Email            string
+	NewPassword      string
+	ConfirmationCode string
+}
+
 type IdentityProvider interface {
 	SignUp(in SignUpInput) (string, error)
 	ConfirmAccount(in ConfirmAccountInput) error
 	SignIn(in SignInInput) (SignInOutput, error)
 	RefreshSession(refreshToken string) (string, error)
-	// ForgotPassword()
-	// ResetPassword()
+	ForgotPassword(email string) error
+	ResetPassword(in ResetPasswordInput) error
 	RetriveUser(accessToken string) (model.User, error)
 }

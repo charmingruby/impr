@@ -106,6 +106,38 @@ func (c *CognitoIdentityProvider) RefreshSession(refreshToken string) (string, e
 	return *op.AuthenticationResult.AccessToken, nil
 }
 
+func (c *CognitoIdentityProvider) ForgotPassword(email string) error {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	_, err := c.cognito.Client.ForgotPassword(ctx, &cognito.ForgotPasswordInput{
+		ClientId: &c.cognito.AppClientID,
+		Username: &email,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *CognitoIdentityProvider) ResetPassword(in gateway.ResetPasswordInput) error {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	_, err := c.cognito.Client.ConfirmForgotPassword(ctx, &cognito.ConfirmForgotPasswordInput{
+		ClientId:         &c.cognito.AppClientID,
+		ConfirmationCode: &in.ConfirmationCode,
+		Password:         &in.NewPassword,
+		Username:         &in.Email,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *CognitoIdentityProvider) RetrieveUser(accessToken string) (model.User, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
