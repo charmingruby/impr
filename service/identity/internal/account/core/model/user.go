@@ -1,46 +1,29 @@
 package model
 
 import (
+	"encoding/json"
 	"time"
-
-	"github.com/oklog/ulid/v2"
 )
 
 type User struct {
-	ID        string     `json:"id" db:"id"`
-	Name      string     `json:"name" db:"name"`
-	CreatedAt time.Time  `json:"created_at" db:"created_at"`
-	UpdatedAt *time.Time  `json:"updated_at" db:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at"`
+	ID         string    `json:"id"`
+	FirstName  string    `json:"first_name"`
+	LastName   string    `json:"last_name"`
+	Email      string    `json:"email"`
+	IsVerified bool      `json:"is_verified"`
+	Birthdate  time.Time `json:"birthdate"`
 }
 
-type NewUserInput struct {
-	Name string
+func (u *User) Marshal() ([]byte, error) {
+	return json.Marshal(u)
 }
 
-func NewUser(in NewUserInput) *User {
-	return &User{
-		ID:        ulid.Make().String(),
-		Name:      in.Name,
-		CreatedAt: time.Now(),
-		UpdatedAt: nil,
-		DeletedAt: nil,
+func UnmarshalUser(payload []byte) (*User, error) {
+	u := User{}
+
+	if err := json.Unmarshal(payload, &u); err != nil {
+		return nil, err
 	}
-}
 
-func FromUser(in User) *User {
-    return &User{
-        ID:        in.ID,
-        Name:      in.Name,
-        CreatedAt: in.CreatedAt,
-        UpdatedAt: in.UpdatedAt,
-        DeletedAt: in.DeletedAt,
-    }
-}
-
-func (m *User) SoftDelete() {
-	now := time.Now()
-
-	m.UpdatedAt = &now
-	m.DeletedAt = &now
+	return &u, nil
 }

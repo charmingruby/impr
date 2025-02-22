@@ -1,6 +1,10 @@
 package gateway
 
-import "time"
+import (
+	"time"
+
+	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
+)
 
 type SignUpInput struct {
 	FirstName string
@@ -32,4 +36,5 @@ type IdentityProvider interface {
 	// RefreshSession()
 	// ForgotPassword()
 	// ResetPassword()
+	RetriveUser(accessToken string) (model.User, error)
 }

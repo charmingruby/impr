@@ -1,12 +1,16 @@
 package client
 
 import (
+	"strconv"
+	"time"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/charmingruby/impr/lib/pkg/awsc"
 	"github.com/charmingruby/impr/lib/pkg/integration"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
+	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
 )
 
@@ -82,4 +86,47 @@ func (c *CognitoIdentityProvider) SignIn(in gateway.SignInInput) (gateway.SignIn
 		AccessToken:  *op.AuthenticationResult.AccessToken,
 		RefreshToken: *op.AuthenticationResult.RefreshToken,
 	}, nil
+}
+
+func (c *CognitoIdentityProvider) RetrieveUser(accessToken string) (model.User, error) {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	op, err := c.cognito.Client.GetUser(ctx, &cognito.GetUserInput{
+		AccessToken: &accessToken,
+	})
+	if err != nil {
+		return model.User{}, err
+	}
+
+	u := cognitoUserToModel(op)
+
+	return u, nil
+}
+
+func cognitoUserToModel(in *cognito.GetUserOutput) model.User {
+	u := model.User{}
+
+	for _, v := range in.UserAttributes {
+		switch *v.Name {
+		case "sub":
+			u.ID = *v.Value
+		case "email":
+			u.Email = *v.Value
+		case "email_verified":
+			isVerified, _ := strconv.ParseBool(*v.Value)
+			u.IsVerified = isVerified
+		case "given_name":
+			u.FirstName = *v.Value
+		case "family_name":
+			u.LastName = *v.Value
+		case "birthdate":
+			birthdate, err := time.Parse("2006-01-02", *v.Value)
+			if err == nil {
+				u.Birthdate = birthdate
+			}
+		}
+	}
+
+	return u
 }
