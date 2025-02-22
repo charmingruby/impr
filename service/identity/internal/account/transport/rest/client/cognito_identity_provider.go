@@ -88,6 +88,24 @@ func (c *CognitoIdentityProvider) SignIn(in gateway.SignInInput) (gateway.SignIn
 	}, nil
 }
 
+func (c *CognitoIdentityProvider) RefreshSession(refreshToken string) (string, error) {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	op, err := c.cognito.Client.InitiateAuth(ctx, &cognito.InitiateAuthInput{
+		AuthFlow: types.AuthFlowTypeRefreshTokenAuth,
+		ClientId: &c.cognito.AppClientID,
+		AuthParameters: map[string]string{
+			"REFRESH_TOKEN": refreshToken,
+		},
+	})
+	if err != nil {
+		return "", err
+	}
+
+	return *op.AuthenticationResult.AccessToken, nil
+}
+
 func (c *CognitoIdentityProvider) RetrieveUser(accessToken string) (model.User, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()

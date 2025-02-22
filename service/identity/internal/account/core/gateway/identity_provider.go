@@ -33,7 +33,7 @@ type IdentityProvider interface {
 	SignUp(in SignUpInput) (string, error)
 	ConfirmAccount(in ConfirmAccountInput) error
 	SignIn(in SignInInput) (SignInOutput, error)
-	// RefreshSession()
+	RefreshSession(refreshToken string) (string, error)
 	// ForgotPassword()
 	// ResetPassword()
 	RetriveUser(accessToken string) (model.User, error)
