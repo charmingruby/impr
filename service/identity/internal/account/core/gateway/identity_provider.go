@@ -1,4 +1,4 @@
-package client
+package gateway
 
 import "time"
 
@@ -10,9 +10,14 @@ type SignUpInput struct {
 	Password  string
 }
 
+type ConfirmAccountInput struct {
+	Email string
+	Code  string
+}
+
 type IdentityProvider interface {
 	SignUp(in SignUpInput) error
-	// ConfirmAccount()
+	ConfirmAccount(in ConfirmAccountInput) error
 	// SignIn()
 	// RefreshSession()
 	// ForgotPassword()

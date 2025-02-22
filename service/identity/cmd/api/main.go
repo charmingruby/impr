@@ -5,7 +5,7 @@ import (
 
 	"github.com/charmingruby/impr/service/identity/config"
 	"github.com/charmingruby/impr/service/identity/internal/shared/transport/rest"
-	"github.com/charmingruby/impr/service/identity/pkg/aws"
+	"github.com/charmingruby/impr/service/identity/pkg/awsc"
 	"github.com/charmingruby/impr/service/identity/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
@@ -18,7 +18,7 @@ func main() {
 		panic(err)
 	}
 
-	_, err = aws.NewCognitoClient(cfg.Cognito.AppClientID)
+	_, err = awsc.NewCognitoClient(cfg.Cognito.AppClientID)
 	if err != nil {
 		panic(err)
 	}

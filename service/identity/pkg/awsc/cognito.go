@@ -1,20 +1,18 @@
-package aws
+package awsc
 
 import (
-	"context"
-	"time"
-
 	"github.com/aws/aws-sdk-go-v2/config"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	"github.com/charmingruby/impr/service/identity/pkg/integration"
 )
 
 type CognitoClient struct {
-	appClientID string
-	client      *cognito.Client
+	AppClientID string
+	Client      *cognito.Client
 }
 
 func NewCognitoClient(appClientID string) (*CognitoClient, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	ctx, cancel := integration.NewContext()
 	defer cancel()
 
 	config, err := config.LoadDefaultConfig(ctx)
@@ -25,7 +23,7 @@ func NewCognitoClient(appClientID string) (*CognitoClient, error) {
 	client := cognito.NewFromConfig(config)
 
 	return &CognitoClient{
-		appClientID: appClientID,
-		client:      client,
+		AppClientID: appClientID,
+		Client:      client,
 	}, nil
 }

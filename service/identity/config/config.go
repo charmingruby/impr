@@ -22,6 +22,9 @@ func New() (Config, error) {
 			Port: environment.ServerPort,
 			Host: environment.ServerHost,
 		},
+		Cognito: cognitoConfig{
+			AppClientID: environment.CognitoAppClientID,
+		},
 	}
 
 	return cfg, nil
