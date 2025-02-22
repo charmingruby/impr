@@ -15,10 +15,20 @@ type ConfirmAccountInput struct {
 	Code  string
 }
 
+type SignInInput struct {
+	Email    string
+	Password string
+}
+
+type SignInOutput struct {
+	AccessToken  string
+	RefreshToken string
+}
+
 type IdentityProvider interface {
-	SignUp(in SignUpInput) error
+	SignUp(in SignUpInput) (string, error)
 	ConfirmAccount(in ConfirmAccountInput) error
-	// SignIn()
+	SignIn(in SignInInput) (SignInOutput, error)
 	// RefreshSession()
 	// ForgotPassword()
 	// ResetPassword()

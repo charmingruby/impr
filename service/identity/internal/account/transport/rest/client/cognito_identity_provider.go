@@ -20,7 +20,7 @@ func NewCognitoIdentityProvider(cognito *awsc.CognitoClient) *CognitoIdentityPro
 	}
 }
 
-func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (*cognito.SignUpOutput, error) {
+func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (string, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
@@ -43,17 +43,43 @@ func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (*cognito.SignU
 		},
 	})
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return op, nil
+	return *op.UserSub, nil
 }
 
 func (c *CognitoIdentityProvider) ConfirmAccount(in gateway.ConfirmAccountInput) error {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
-	c.cognito.Client.ConfirmSignUp(ctx, &cognito.ConfirmSignUpInput{})
+	_, err := c.cognito.Client.ConfirmSignUp(ctx, &cognito.ConfirmSignUpInput{
+		ClientId:         &c.cognito.AppClientID,
+		Username:         &in.Email,
+		ConfirmationCode: &in.Code,
+	})
 
-	return nil
+	return err
+}
+
+func (c *CognitoIdentityProvider) SignIn(in gateway.SignInInput) (gateway.SignInOutput, error) {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	op, err := c.cognito.Client.InitiateAuth(ctx, &cognito.InitiateAuthInput{
+		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
+		ClientId: &c.cognito.AppClientID,
+		AuthParameters: map[string]string{
+			"USERNAME": in.Email,
+			"PASSWORD": in.Password,
+		},
+	})
+	if err != nil {
+		return gateway.SignInOutput{}, err
+	}
+
+	return gateway.SignInOutput{
+		AccessToken:  *op.AuthenticationResult.AccessToken,
+		RefreshToken: *op.AuthenticationResult.RefreshToken,
+	}, nil
 }
