@@ -42,5 +42,5 @@ type IdentityProvider interface {
 	RefreshSession(refreshToken string) (string, error)
 	ForgotPassword(email string) error
 	ResetPassword(in ResetPasswordInput) error
-	RetriveUser(accessToken string) (model.User, error)
+	RetrieveUser(accessToken string) (model.User, error)
 }
