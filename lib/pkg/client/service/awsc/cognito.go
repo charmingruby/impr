@@ -3,7 +3,7 @@ package awsc
 import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
-	"github.com/charmingruby/impr/lib/pkg/integration"
+	"github.com/charmingruby/impr/lib/pkg/client/integration"
 )
 
 type CognitoClient struct {

@@ -1,17 +1,20 @@
 package client
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
-	"github.com/charmingruby/impr/lib/pkg/awsc"
-	"github.com/charmingruby/impr/lib/pkg/integration"
+	"github.com/charmingruby/impr/lib/pkg/client/integration"
+	"github.com/charmingruby/impr/lib/pkg/client/service/awsc"
+	"github.com/charmingruby/impr/lib/pkg/errs"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
+	"github.com/charmingruby/impr/service/identity/pkg/logger"
 )
 
 type CognitoIdentityProvider struct {
@@ -28,7 +31,7 @@ func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (string, error)
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
-	parsedBirthdate := helper.BirthdateParser(in.Birthdate)
+	parsedBirthdate := helper.BirthdateToString(in.Birthdate)
 
 	op, err := c.cognito.Client.SignUp(ctx, &cognito.SignUpInput{
 		ClientId: &c.cognito.AppClientID,
@@ -47,7 +50,19 @@ func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (string, error)
 		},
 	})
 	if err != nil {
-		return "", err
+		var invalidPasswordError *types.InvalidPasswordException
+		if errors.As(err, &invalidPasswordError) {
+			return "", errs.NewInvalidFieldFormatErr("password", err)
+		}
+
+		var emailAlreadyExistsError *types.UsernameExistsException
+		if errors.As(err, &emailAlreadyExistsError) {
+			return "", errs.NewConflictErr("email")
+		}
+
+		logger.Log.Error(err.Error())
+
+		return "", errs.NewClientUncaughtErr()
 	}
 
 	return *op.UserSub, nil

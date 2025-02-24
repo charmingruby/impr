@@ -1,0 +1,11 @@
+### Sign Up
+POST http://localhost:3000/signup HTTP/1.1
+content-type: application/json
+
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "dias.gustavoalmeida@estudante.ufjf.br",
+  "birthdate": "05/31/2003",
+  "password": "P@ssword123"
+}
