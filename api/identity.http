@@ -5,7 +5,16 @@ content-type: application/json
 {
   "first_name": "John",
   "last_name": "Doe",
-  "email": "dias.gustavoalmeida@estudante.ufjf.br",
+  "email": "",
   "birthdate": "05/31/2003",
   "password": "P@ssword123"
+}
+
+### Sign In
+POST http://localhost:3000/signin HTTP/1.1
+content-type: application/json
+
+{
+  "email": "",
+  "password": "Password123"
 }

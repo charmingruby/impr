@@ -10,9 +10,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/charmingruby/impr/lib/pkg/client/integration"
 	"github.com/charmingruby/impr/lib/pkg/client/service/awsc"
-	"github.com/charmingruby/impr/lib/pkg/errs"
+	"github.com/charmingruby/impr/lib/pkg/core_err"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
+	"github.com/charmingruby/impr/service/identity/internal/shared/custom_err"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
 	"github.com/charmingruby/impr/service/identity/pkg/logger"
 )
@@ -52,17 +53,17 @@ func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (string, error)
 	if err != nil {
 		var invalidPasswordError *types.InvalidPasswordException
 		if errors.As(err, &invalidPasswordError) {
-			return "", errs.NewInvalidFieldFormatErr("password", err)
+			return "", core_err.NewInvalidFieldFormatErr("password", err)
 		}
 
 		var emailAlreadyExistsError *types.UsernameExistsException
 		if errors.As(err, &emailAlreadyExistsError) {
-			return "", errs.NewConflictErr("email")
+			return "", core_err.NewConflictErr("email")
 		}
 
 		logger.Log.Error(err.Error())
 
-		return "", errs.NewClientUncaughtErr()
+		return "", custom_err.NewClientUncaughtErr(err)
 	}
 
 	return *op.UserSub, nil
@@ -94,7 +95,22 @@ func (c *CognitoIdentityProvider) SignIn(in gateway.SignInInput) (gateway.SignIn
 		},
 	})
 	if err != nil {
-		return gateway.SignInOutput{}, err
+		var userNotConfirmedErr *types.UserNotConfirmedException
+		if errors.As(err, &userNotConfirmedErr) {
+			return gateway.SignInOutput{}, custom_err.NewUserNotConfirmedErr()
+		}
+
+		var invalidPasswordErr *types.NotAuthorizedException
+		if errors.As(err, &invalidPasswordErr) {
+			return gateway.SignInOutput{}, custom_err.NewInvalidCredentialsErr()
+		}
+
+		var invalidEmailErr *types.UserNotFoundException
+		if errors.As(err, &invalidEmailErr) {
+			return gateway.SignInOutput{}, custom_err.NewInvalidCredentialsErr()
+		}
+
+		return gateway.SignInOutput{}, custom_err.NewClientUncaughtErr(err)
 	}
 
 	return gateway.SignInOutput{

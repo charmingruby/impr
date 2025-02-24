@@ -1,4 +1,4 @@
-package errs
+package core_err
 
 import "fmt"
 

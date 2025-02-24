@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/charmingruby/impr/lib/pkg/errs"
+	"github.com/charmingruby/impr/lib/pkg/core_err"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
 )
@@ -17,7 +17,7 @@ type SignUpParams struct {
 func (s *Service) SignUp(in SignUpParams) (string, error) {
 	parsedBirthdate, err := helper.StringToBirthdate(in.Birthdate)
 	if err != nil {
-		return "", errs.NewInvalidFieldFormatErr("birthdate", err)
+		return "", core_err.NewInvalidFieldFormatErr("birthdate", err)
 	}
 
 	userID, err := s.identityProvider.SignUp(gateway.SignUpInput{

@@ -13,6 +13,12 @@ func NewPayloadErrorResponse(ctx echo.Context, msg string) error {
 	})
 }
 
+func NewUnauthorizedErrorResponse(ctx echo.Context, msg string) error {
+	return ctx.JSON(http.StatusUnauthorized, map[string]string{
+		"error": msg,
+	})
+}
+
 func NewCreatedResponse(ctx echo.Context, entity, resultantID string) error {
 	return ctx.JSON(http.StatusCreated, map[string]any{
 		"message": fmt.Sprintf("%s created successfully", entity),
@@ -20,8 +26,20 @@ func NewCreatedResponse(ctx echo.Context, entity, resultantID string) error {
 	})
 }
 
+func NewOkResponse(ctx echo.Context, data any) error {
+	return ctx.JSON(http.StatusOK, map[string]any{
+		"data": data,
+	})
+}
+
 func NewConflictErrorResponse(ctx echo.Context, msg string) error {
 	return ctx.JSON(http.StatusConflict, map[string]any{
+		"message": msg,
+	})
+}
+
+func NewBadRequestResponse(ctx echo.Context, msg string) error {
+	return ctx.JSON(http.StatusBadRequest, map[string]any{
 		"message": msg,
 	})
 }

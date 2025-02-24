@@ -3,7 +3,7 @@ package endpoint
 import (
 	"errors"
 
-	"github.com/charmingruby/impr/lib/pkg/errs"
+	"github.com/charmingruby/impr/lib/pkg/core_err"
 	"github.com/charmingruby/impr/lib/pkg/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/validation"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/service"
@@ -39,12 +39,12 @@ func (e *Endpoint) makeSignUpEndpoint() echo.HandlerFunc {
 			Password:  req.Password,
 		})
 		if err != nil {
-			var invalidFieldFormatErr *errs.InvalidFieldFormatErr
+			var invalidFieldFormatErr *core_err.InvalidFieldFormatErr
 			if errors.As(err, &invalidFieldFormatErr) {
 				return rest.NewPayloadErrorResponse(c, invalidFieldFormatErr.Error())
 			}
 
-			var conflictErr *errs.ConflictErr
+			var conflictErr *core_err.ConflictErr
 			if errors.As(err, &conflictErr) {
 				return rest.NewConflictErrorResponse(c, conflictErr.Error())
 			}

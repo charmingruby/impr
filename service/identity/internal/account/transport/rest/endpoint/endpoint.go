@@ -23,4 +23,5 @@ func New(
 
 func (e *Endpoint) Register() {
 	e.r.POST("/signup", e.makeSignUpEndpoint())
+	e.r.POST("/signin", e.makeSignInEndpoint())
 }
