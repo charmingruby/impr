@@ -69,3 +69,17 @@ func NewExpiredCodeErr() *ExpiredCodeErr {
 func (e *ExpiredCodeErr) Error() string {
 	return e.Message
 }
+
+type InvalidTokenErr struct {
+	Message string `json:"message"`
+}
+
+func NewInvalidTokenErr() *InvalidTokenErr {
+	return &InvalidTokenErr{
+		Message: "invalid token",
+	}
+}
+
+func (e *InvalidTokenErr) Error() string {
+	return e.Message
+}

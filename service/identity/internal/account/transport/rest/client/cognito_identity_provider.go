@@ -147,6 +147,11 @@ func (c *CognitoIdentityProvider) RefreshSession(refreshToken string) (string, e
 		},
 	})
 	if err != nil {
+		var invalidTokenErr *types.NotAuthorizedException
+		if errors.As(err, &invalidTokenErr) {
+			return "", custom_err.NewInvalidTokenErr()
+		}
+
 		return "", err
 	}
 

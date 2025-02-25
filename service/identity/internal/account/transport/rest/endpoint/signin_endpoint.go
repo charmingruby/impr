@@ -16,6 +16,11 @@ type SignInRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type SignInData struct {
+	RefreshToken string `json:"refresh_token"`
+	AccessToken  string `json:"access_token"`
+}
+
 func (e *Endpoint) makeSignInEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := new(SignInRequest)
@@ -49,8 +54,11 @@ func (e *Endpoint) makeSignInEndpoint() echo.HandlerFunc {
 			return rest.NewInternalServerErrorReponse(c)
 		}
 
-		res := map[string]any{
-			"data": tokens,
+		res := map[string]SignInData{
+			"data": {
+				RefreshToken: tokens.RefreshToken,
+				AccessToken:  tokens.AccessToken,
+			},
 		}
 
 		return rest.NewOkResponse(c, res)

@@ -27,4 +27,5 @@ func (e *Endpoint) Register() {
 	g.POST("/signup", e.makeSignUpEndpoint())
 	g.POST("/confirm-account", e.makeConfirmAccountEndpoint())
 	g.POST("/signin", e.makeSignInEndpoint())
+	g.POST("/refresh", e.makeRefreshSessionEndpoint())
 }

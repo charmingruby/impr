@@ -27,9 +27,7 @@ func NewCreatedResponse(ctx echo.Context, entity, resultantID string) error {
 }
 
 func NewOkResponse(ctx echo.Context, data any) error {
-	return ctx.JSON(http.StatusOK, map[string]any{
-		"data": data,
-	})
+	return ctx.JSON(http.StatusOK, data)
 }
 
 func NewConflictErrorResponse(ctx echo.Context, msg string) error {
