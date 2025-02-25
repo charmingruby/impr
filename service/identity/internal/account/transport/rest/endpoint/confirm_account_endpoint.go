@@ -11,14 +11,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SignInRequest struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+type ConfirmAccountRequest struct {
+	Email            string `json:"email" validate:"required,email"`
+	ConfirmationCode string `json:"confirmation_code" validate:"required"`
 }
 
-func (e *Endpoint) makeSignInEndpoint() echo.HandlerFunc {
+func (e *Endpoint) makeConfirmAccountEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		req := new(SignInRequest)
+		req := new(ConfirmAccountRequest)
 
 		if err := c.Bind(req); err != nil {
 			return rest.NewPayloadErrorResponse(c, err.Error())
@@ -28,20 +28,23 @@ func (e *Endpoint) makeSignInEndpoint() echo.HandlerFunc {
 			return rest.NewPayloadErrorResponse(c, err.Error())
 		}
 
-		tokens, err := e.service.SignIn(service.SignInParams{
-			Email:    req.Email,
-			Password: req.Password,
-		})
+		if err := e.service.ConfirmAccount(service.ConfirmAccountParams{
+			Email: req.Email,
+			Code:  req.ConfirmationCode,
+		}); err != nil {
+			var mismatchCodeErr *custom_err.InvalidCodeErr
+			if errors.As(err, &mismatchCodeErr) {
+				return rest.NewUnauthorizedErrorResponse(c, mismatchCodeErr.Error())
+			}
 
-		if err != nil {
 			var invalidCredentialsErr *custom_err.InvalidCredentialsErr
 			if errors.As(err, &invalidCredentialsErr) {
 				return rest.NewUnauthorizedErrorResponse(c, invalidCredentialsErr.Error())
 			}
 
-			var userNotConfirmedErr *custom_err.UserNotConfirmedErr
-			if errors.As(err, &userNotConfirmedErr) {
-				return rest.NewBadRequestResponse(c, userNotConfirmedErr.Error())
+			var expiredCodeErr *custom_err.ExpiredCodeErr
+			if errors.As(err, &expiredCodeErr) {
+				return rest.NewUnauthorizedErrorResponse(c, expiredCodeErr.Error())
 			}
 
 			logger.Log.Error(err.Error())
@@ -49,8 +52,8 @@ func (e *Endpoint) makeSignInEndpoint() echo.HandlerFunc {
 			return rest.NewInternalServerErrorReponse(c)
 		}
 
-		res := map[string]any{
-			"data": tokens,
+		res := map[string]string{
+			"message": "account confirmed successfully",
 		}
 
 		return rest.NewOkResponse(c, res)

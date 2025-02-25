@@ -15,7 +15,6 @@ import (
 	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
 	"github.com/charmingruby/impr/service/identity/internal/shared/custom_err"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
-	"github.com/charmingruby/impr/service/identity/pkg/logger"
 )
 
 type CognitoIdentityProvider struct {
@@ -61,8 +60,6 @@ func (c *CognitoIdentityProvider) SignUp(in gateway.SignUpInput) (string, error)
 			return "", core_err.NewConflictErr("email")
 		}
 
-		logger.Log.Error(err.Error())
-
 		return "", custom_err.NewClientUncaughtErr(err)
 	}
 
@@ -78,6 +75,25 @@ func (c *CognitoIdentityProvider) ConfirmAccount(in gateway.ConfirmAccountInput)
 		Username:         &in.Email,
 		ConfirmationCode: &in.Code,
 	})
+
+	if err != nil {
+		var expiredCodeErr *types.ExpiredCodeException
+		if errors.As(err, &expiredCodeErr) {
+			return custom_err.NewExpiredCodeErr()
+		}
+
+		var mismatchCodeErr *types.CodeMismatchException
+		if errors.As(err, &mismatchCodeErr) {
+			return custom_err.NewInvalidCodeErr()
+		}
+
+		var invalidEmailErr *types.UserNotFoundException
+		if errors.As(err, &invalidEmailErr) {
+			return custom_err.NewInvalidCredentialsErr()
+		}
+
+		return custom_err.NewClientUncaughtErr(err)
+	}
 
 	return err
 }

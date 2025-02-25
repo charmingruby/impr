@@ -22,6 +22,9 @@ func New(
 }
 
 func (e *Endpoint) Register() {
-	e.r.POST("/signup", e.makeSignUpEndpoint())
-	e.r.POST("/signin", e.makeSignInEndpoint())
+	g := e.r.Group("/api/auth")
+
+	g.POST("/signup", e.makeSignUpEndpoint())
+	g.POST("/confirm-account", e.makeConfirmAccountEndpoint())
+	g.POST("/signin", e.makeSignInEndpoint())
 }

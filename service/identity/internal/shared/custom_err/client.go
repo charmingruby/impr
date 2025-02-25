@@ -41,3 +41,31 @@ func NewInvalidCredentialsErr() *InvalidCredentialsErr {
 func (e *InvalidCredentialsErr) Error() string {
 	return e.Message
 }
+
+type InvalidCodeErr struct {
+	Message string `json:"message"`
+}
+
+func NewInvalidCodeErr() *InvalidCodeErr {
+	return &InvalidCodeErr{
+		Message: "invalid code",
+	}
+}
+
+func (e *InvalidCodeErr) Error() string {
+	return e.Message
+}
+
+type ExpiredCodeErr struct {
+	Message string `json:"message"`
+}
+
+func NewExpiredCodeErr() *ExpiredCodeErr {
+	return &ExpiredCodeErr{
+		Message: "code expired",
+	}
+}
+
+func (e *ExpiredCodeErr) Error() string {
+	return e.Message
+}
