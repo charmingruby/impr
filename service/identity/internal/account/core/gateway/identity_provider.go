@@ -40,7 +40,8 @@ type IdentityProvider interface {
 	ConfirmAccount(in ConfirmAccountInput) error
 	SignIn(in SignInInput) (SignInOutput, error)
 	RefreshSession(refreshToken string) (string, error)
+	RetrieveUser(id string) (model.User, error)
+
 	ForgotPassword(email string) error
 	ResetPassword(in ResetPasswordInput) error
-	RetrieveUser(accessToken string) (model.User, error)
 }

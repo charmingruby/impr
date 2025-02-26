@@ -24,6 +24,7 @@ func New() (Config, error) {
 		},
 		Cognito: cognitoConfig{
 			AppClientID: environment.CognitoAppClientID,
+			UserPoolID:  environment.CognitoUserPoolID,
 		},
 	}
 
@@ -34,6 +35,7 @@ type environment struct {
 	ServerPort         string `env:"SERVER_PORT,required"`
 	ServerHost         string `env:"SERVER_HOST,required"`
 	CognitoAppClientID string `env:"COGNITO_APP_CLIENT_ID,required"`
+	CognitoUserPoolID  string `env:"COGNITO_USER_POLL_ID,required"`
 }
 
 type Config struct {
@@ -48,4 +50,5 @@ type serverConfig struct {
 
 type cognitoConfig struct {
 	AppClientID string
+	UserPoolID  string
 }

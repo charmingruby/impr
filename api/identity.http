@@ -5,7 +5,7 @@ content-type: application/json
 {
   "first_name": "John",
   "last_name": "Doe",
-  "email": "anejdf@hotmail.com",
+  "email": "",
   "birthdate": "05/31/2003",
   "password": "P@ssword123"
 }
@@ -15,7 +15,7 @@ POST http://localhost:3000/api/auth/signin HTTP/1.1
 content-type: application/json
 
 {
-  "email": "gustavodiasa2121@gmail.com",
+  "email": "",
   "password": "Password!23"
 }
 
@@ -33,5 +33,9 @@ POST http://localhost:3000/api/auth/refresh HTTP/1.1
 content-type: application/json
 
 {
-  "refresh_token": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.2tazNUy7OXi_a1CihLV8GseOg3FDnys4R6v6w2WxsuiOnNTCe1NvWuTtpHTaWiPVnU-qdxPTSeNflfvogSW7j_m8Dlwcm4cMqmTOCGY0uJqR51ZLf-tD_rmBaCYKBnfUtOCf1DprWUxYIdE2uSivvigV5seudjFnyos139NqxqzfgHX0UFDoeIdFR-JSB5ltUNlLz4U1rt5A03vAQdjwWlGS65_miuWAM9u4wc9urPvLPiNyBYJBwIe71GRJSnHPp0WKENe8hM9Eg8xCin7YPLKZ9hovWOVvX2n_EhbA60J5I5YiXnMb1t6dkHDsCTKsRHP4fHXNKSr1ua6ldkll2w.IQDbvlhIeOViabDR.ZOE-jgeXKwkmlW2_XlOi0ijTJNAa3NNC6K7DUP2vinVwnzleGIFX8gSyioX48o09BJWti0Nnegttj7AM-Jv7AFs_6dXXk-4XteguXZ2fpQYDO3Mk-28Xs8Mz-j8_GwgZn4F0oDy1O7wuAC656NxIkD2OzmkbLO_2ELo8VjoTgeYdDUn-7-04IANokmwypOSTjea6eahv-qIyCm4-mwgOUO9STeh1O-vu23cJ0XvSAVZAoqZzqAWjH7_6NZSJ7SC1Zp0lkD7JNLXrRFvW2lhiEsIzArqi6Ph2uUoR0GHZUx6gUbDK0w0WJTuIZm8qEOD1FsrD6oX77-l-3EwxwBEn9Ma5V1LNNShD8HI8nVdGtqPpMyGWYjL_iY2dXeDHYEL7TKpMzo4s9RwIJzkhOd9iH0tN6WnPPt5IcJ6sJYu5dpL9u7iGSTyDfrz5ZGLGAjBVuC0UXpjpuyDkKCzfb13TFwJYysH9ycbsTvzYikdPUZVvMF3qhkWs62MY8hozO-YuCEw0RqWAKf6fv4nJJdJv_6oWp2Az6xzIylK9l7hC1g3Lkx3YuefYyjn_i6S9yvMwjZGrw1NR5CKGo6dMwZ3T29KHUgMGNXV4f6CT1ZcNGdCRGG0ieHu72U1Z-_JY1w6wlnEBQdpzpyjRyJd7ctia56NJ5MN65FdYLtUDDLvmJzSQs7QfVGpRZASgxZqefuJNejmK_OXZoxqiOcEvzj7R-yRoIjmgZcZazfwo5zA-2jEvGd_BSRMHQHTtAraZ23zM1EjUAsYo_dEQkd4vLI0eQJ0mEFbzqUeqg9EtZN-6n4DMzg5gXfTm-FoSMu72i3YASpULfqVDBSRE0apR3Jnm5yWseaX7UFF55ZAZWPh_XNVGGADVTux60IKDCGZKmtp2JBzbcQ_5zE1ZlrECcPOU2NSuOdvq45SAJh_LHdENA9q5gCPfK1k29YHavwWZDp5z5tWaky8sqWNun7cQt4fIca6WKTwthLB9GDqlx7wsDs8lvCM6E-36qvG_20CJh5RF3G8Cws79L64WR0wwt6Jy_aoZ95l8xpbr_jiltd8jPtgQvQeQpTY0plumrnfz1d8vHk1FhAij5AptoQ9Bk8YEXy_At2DqGRgtndc5ueFViuf0zMl481H1ZUa83e-gUFCk5I1QuGKeUOUSiHN3Uqxc4U9t8OXBN7AGIVnkp4RDrkt3Q-gUOj6Y8R0ZF2tMk_tSBj7AWTULpO4c4n0Hv9OAxy0C6ct_QfL54asrfOX_3V8EKdkZ33jLIhErKOGKlKrAK-0WEG5bugRQyAZVQXFd3JDWo0my9UosyszIjYSKqotUBQJahXRUMu5hfw.s8SrXWhDdsEnOJoTeFEkyA"
+  "refresh_token": ""
 }
+
+### Retrieve User
+GET http://localhost:3000/api/user/a45804c8-7051-7038-a419-5707efdab978 HTTP/1.1
+content-type: application/json

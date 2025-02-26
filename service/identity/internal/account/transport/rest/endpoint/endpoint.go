@@ -22,10 +22,14 @@ func New(
 }
 
 func (e *Endpoint) Register() {
-	g := e.r.Group("/api/auth")
+	api := e.r.Group("/api")
 
-	g.POST("/signup", e.makeSignUpEndpoint())
-	g.POST("/confirm-account", e.makeConfirmAccountEndpoint())
-	g.POST("/signin", e.makeSignInEndpoint())
-	g.POST("/refresh", e.makeRefreshSessionEndpoint())
+	auth := api.Group("/auth")
+	auth.POST("/signup", e.makeSignUpEndpoint())
+	auth.POST("/confirm-account", e.makeConfirmAccountEndpoint())
+	auth.POST("/signin", e.makeSignInEndpoint())
+	auth.POST("/refresh", e.makeRefreshSessionEndpoint())
+
+	user := api.Group("/user")
+	user.GET("/:user-id", e.makeRetrieveUserEndpoint())
 }

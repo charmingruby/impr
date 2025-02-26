@@ -3,7 +3,6 @@ package client
 import (
 	"errors"
 	"strconv"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
@@ -190,26 +189,27 @@ func (c *CognitoIdentityProvider) ResetPassword(in gateway.ResetPasswordInput) e
 	return nil
 }
 
-func (c *CognitoIdentityProvider) RetrieveUser(accessToken string) (model.User, error) {
+func (c *CognitoIdentityProvider) RetrieveUser(id string) (model.User, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
-	op, err := c.cognito.Client.GetUser(ctx, &cognito.GetUserInput{
-		AccessToken: &accessToken,
+	op, err := c.cognito.Client.ListUsers(ctx, &cognito.ListUsersInput{
+		UserPoolId: &c.cognito.UserPoolID,
+		Filter:     aws.String("sub = \"" + id + "\""),
 	})
 	if err != nil {
 		return model.User{}, err
 	}
 
-	u := cognitoUserToModel(op)
+	if len(op.Users) == 0 {
+		return model.User{}, core_err.NewResourceNotFoundErr("user")
+	}
 
-	return u, nil
-}
+	foundUser := op.Users[0]
 
-func cognitoUserToModel(in *cognito.GetUserOutput) model.User {
 	u := model.User{}
 
-	for _, v := range in.UserAttributes {
+	for _, v := range foundUser.Attributes {
 		switch *v.Name {
 		case "sub":
 			u.ID = *v.Value
@@ -223,12 +223,15 @@ func cognitoUserToModel(in *cognito.GetUserOutput) model.User {
 		case "family_name":
 			u.LastName = *v.Value
 		case "birthdate":
-			birthdate, err := time.Parse("2006-01-02", *v.Value)
+			birthdate, err := helper.StringToBirthdate(*v.Value)
 			if err == nil {
 				u.Birthdate = birthdate
 			}
 		}
 	}
 
-	return u
+	u.CreatedAt = *foundUser.UserCreateDate
+	u.UpdatedAt = foundUser.UserLastModifiedDate
+
+	return u, nil
 }

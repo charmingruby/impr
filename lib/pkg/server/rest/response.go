@@ -47,3 +47,7 @@ func NewInternalServerErrorReponse(ctx echo.Context) error {
 		"message": "internal server error",
 	})
 }
+
+func NewResourceNotFoundErrResponse(ctx echo.Context) error {
+	return ctx.NoContent(http.StatusNoContent)
+}

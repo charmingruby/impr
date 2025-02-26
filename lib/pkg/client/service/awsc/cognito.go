@@ -8,10 +8,11 @@ import (
 
 type CognitoClient struct {
 	AppClientID string
+	UserPoolID  string
 	Client      *cognito.Client
 }
 
-func NewCognitoClient(appClientID string) (*CognitoClient, error) {
+func NewCognitoClient(appClientID, userPoolID string) (*CognitoClient, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
@@ -24,6 +25,7 @@ func NewCognitoClient(appClientID string) (*CognitoClient, error) {
 
 	return &CognitoClient{
 		AppClientID: appClientID,
+		UserPoolID:  userPoolID,
 		Client:      client,
 	}, nil
 }

@@ -17,8 +17,10 @@ func Test_User_Marshalling(t *testing.T) {
 			FirstName:  "john",
 			LastName:   "doe",
 			Email:      "john@doe.com",
-			IsVerified: true,
+			IsVerified: false,
 			Birthdate:  birthdate,
+			CreatedAt:  time.Now(),
+			UpdatedAt:  nil,
 		}
 
 		payload, err := u.Marshal()
