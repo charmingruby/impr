@@ -31,5 +31,5 @@ func (e *Endpoint) Register() {
 	auth.POST("/refresh", e.makeRefreshSessionEndpoint())
 
 	user := api.Group("/user")
-	user.GET("/:user-id", e.makeRetrieveUserEndpoint())
+	user.GET("/:user-id", e.makeFindUserEndpoint())
 }

@@ -11,18 +11,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type RetrieveUserData struct {
+type FindUserData struct {
 	User model.User `json:"user"`
 }
 
-func (e *Endpoint) makeRetrieveUserEndpoint() echo.HandlerFunc {
+func (e *Endpoint) makeFindUserEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userID := c.Param("user-id")
 		if userID == "" {
 			return rest.NewBadRequestResponse(c, "user-id is required")
 		}
 
-		user, err := e.service.RetrieveUser(service.RetrieveUserParams{
+		user, err := e.service.FindUser(service.FindUserParams{
 			ID: userID,
 		})
 		if err != nil {
@@ -36,7 +36,7 @@ func (e *Endpoint) makeRetrieveUserEndpoint() echo.HandlerFunc {
 			return rest.NewInternalServerErrorReponse(c)
 		}
 
-		res := map[string]RetrieveUserData{
+		res := map[string]FindUserData{
 			"data": {
 				User: user,
 			},

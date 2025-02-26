@@ -35,12 +35,22 @@ type ResetPasswordInput struct {
 	ConfirmationCode string
 }
 
+type RetrieveUserAttributesFromTokenOutput struct {
+	ID         string
+	Email      string
+	FirstName  string
+	LastName   string
+	IsVerified bool
+	Birthdate  time.Time
+}
+
 type IdentityProvider interface {
 	SignUp(in SignUpInput) (string, error)
 	ConfirmAccount(in ConfirmAccountInput) error
 	SignIn(in SignInInput) (SignInOutput, error)
 	RefreshSession(refreshToken string) (string, error)
-	RetrieveUser(id string) (model.User, error)
+	FindUserByID(id string) (model.User, error)
+	RetrieveUserAttributesFromToken(accessToken string) (RetrieveUserAttributesFromTokenOutput, error)
 
 	ForgotPassword(email string) error
 	ResetPassword(in ResetPasswordInput) error

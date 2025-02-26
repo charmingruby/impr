@@ -3,6 +3,7 @@ package client
 import (
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
@@ -189,7 +190,7 @@ func (c *CognitoIdentityProvider) ResetPassword(in gateway.ResetPasswordInput) e
 	return nil
 }
 
-func (c *CognitoIdentityProvider) RetrieveUser(id string) (model.User, error) {
+func (c *CognitoIdentityProvider) FindUserByID(id string) (model.User, error) {
 	ctx, cancel := integration.NewContext()
 	defer cancel()
 
@@ -234,4 +235,40 @@ func (c *CognitoIdentityProvider) RetrieveUser(id string) (model.User, error) {
 	u.UpdatedAt = foundUser.UserLastModifiedDate
 
 	return u, nil
+}
+
+func (c *CognitoIdentityProvider) RetrieveUserAttributesFromToken(accessToken string) (gateway.RetrieveUserAttributesFromTokenOutput, error) {
+	ctx, cancel := integration.NewContext()
+	defer cancel()
+
+	op, err := c.cognito.Client.GetUser(ctx, &cognito.GetUserInput{
+		AccessToken: &accessToken,
+	})
+	if err != nil {
+		return gateway.RetrieveUserAttributesFromTokenOutput{}, err
+	}
+
+	uAtt := gateway.RetrieveUserAttributesFromTokenOutput{}
+
+	for _, v := range op.UserAttributes {
+		switch *v.Name {
+		case "sub":
+			uAtt.ID = *v.Value
+		case "email":
+			uAtt.Email = *v.Value
+		case "email_verified":
+			isVerified, _ := strconv.ParseBool(*v.Value)
+			uAtt.IsVerified = isVerified
+		case "given_name":
+			uAtt.FirstName = *v.Value
+		case "family_name":
+			uAtt.LastName = *v.Value
+		case "birthdate":
+			birthdate, err := time.Parse("2006-01-02", *v.Value)
+			if err == nil {
+				uAtt.Birthdate = birthdate
+			}
+		}
+	}
+	return uAtt, nil
 }
