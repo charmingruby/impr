@@ -53,5 +53,6 @@ type IdentityProvider interface {
 	RetrieveUserAttributesFromToken(accessToken string) (RetrieveUserAttributesFromTokenOutput, error)
 
 	ForgotPassword(email string) error
+
 	ResetPassword(in ResetPasswordInput) error
 }

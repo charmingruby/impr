@@ -39,3 +39,21 @@ content-type: application/json
 ### Retrieve User
 GET http://localhost:3000/api/user/a45804c8-7051-7038-a419-5707efdab978 HTTP/1.1
 content-type: application/json
+
+### Forgot Password
+POST http://localhost:3000/api/auth/forgot-password HTTP/1.1
+content-type: application/json
+
+{
+  "email": ""
+}
+
+### Forgot Password
+POST http://localhost:3000/api/auth/reset-password HTTP/1.1
+content-type: application/json
+
+{
+  "email": "",
+  "confirmation_code": "074041",
+  "new_password": ""
+}

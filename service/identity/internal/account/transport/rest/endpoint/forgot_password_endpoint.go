@@ -5,27 +5,31 @@ import (
 
 	"github.com/charmingruby/impr/lib/pkg/core_err"
 	"github.com/charmingruby/impr/lib/pkg/server/rest"
-	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
+	"github.com/charmingruby/impr/lib/pkg/validation"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/service"
 	"github.com/charmingruby/impr/service/identity/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
 
-type FindUserData struct {
-	User model.User `json:"user"`
+type ForgotPasswordRequest struct {
+	Email string `json:"email" validate:"required,email"`
 }
 
-func (e *Endpoint) makeFindUserEndpoint() echo.HandlerFunc {
+func (e *Endpoint) makeForgotPasswordEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userID := c.Param("user-id")
-		if userID == "" {
-			return rest.NewBadRequestResponse(c, "user-id is required")
+		req := new(ForgotPasswordRequest)
+
+		if err := c.Bind(req); err != nil {
+			return rest.NewPayloadErrorResponse(c, err.Error())
 		}
 
-		user, err := e.service.FindUser(service.FindUserParams{
-			ID: userID,
-		})
-		if err != nil {
+		if err := validation.ValidateStructByTags(req); err != nil {
+			return rest.NewPayloadErrorResponse(c, err.Error())
+		}
+
+		if err := e.service.ForgotPassword(service.ForgotPasswordParams{
+			Email: req.Email,
+		}); err != nil {
 			var resourceNotFoundErr *core_err.ResourceNotFoundErr
 			if errors.As(err, &resourceNotFoundErr) {
 				return rest.NewResourceNotFoundErrResponse(c, resourceNotFoundErr.Error())
@@ -36,10 +40,8 @@ func (e *Endpoint) makeFindUserEndpoint() echo.HandlerFunc {
 			return rest.NewInternalServerErrorReponse(c)
 		}
 
-		res := map[string]FindUserData{
-			"data": {
-				User: user,
-			},
+		res := map[string]string{
+			"message": "reset code sent to email",
 		}
 
 		return rest.NewOkResponse(c, res)

@@ -48,6 +48,6 @@ func NewInternalServerErrorReponse(ctx echo.Context) error {
 	})
 }
 
-func NewResourceNotFoundErrResponse(ctx echo.Context) error {
-	return ctx.NoContent(http.StatusNoContent)
+func NewResourceNotFoundErrResponse(ctx echo.Context, msg string) error {
+	return ctx.JSON(http.StatusNotFound, msg)
 }

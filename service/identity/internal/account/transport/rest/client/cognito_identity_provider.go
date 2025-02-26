@@ -167,6 +167,11 @@ func (c *CognitoIdentityProvider) ForgotPassword(email string) error {
 		Username: &email,
 	})
 	if err != nil {
+		var invalidEmailErr *types.UserNotFoundException
+		if errors.As(err, &invalidEmailErr) {
+			return core_err.NewResourceNotFoundErr("user")
+		}
+
 		return err
 	}
 
@@ -184,6 +189,26 @@ func (c *CognitoIdentityProvider) ResetPassword(in gateway.ResetPasswordInput) e
 		Username:         &in.Email,
 	})
 	if err != nil {
+		var userNotFound *types.UserNotFoundException
+		if errors.As(err, &userNotFound) {
+			return core_err.NewResourceNotFoundErr("user")
+		}
+
+		var userNotConfirmedErr *types.UserNotConfirmedException
+		if errors.As(err, &userNotConfirmedErr) {
+			return custom_err.NewUserNotConfirmedErr()
+		}
+
+		var expiredCodeErr *types.ExpiredCodeException
+		if errors.As(err, &expiredCodeErr) {
+			return custom_err.NewExpiredCodeErr()
+		}
+
+		var mismatchCodeErr *types.CodeMismatchException
+		if errors.As(err, &mismatchCodeErr) {
+			return custom_err.NewInvalidCodeErr()
+		}
+
 		return err
 	}
 
@@ -245,6 +270,16 @@ func (c *CognitoIdentityProvider) RetrieveUserAttributesFromToken(accessToken st
 		AccessToken: &accessToken,
 	})
 	if err != nil {
+		var userNotFound *types.UserNotFoundException
+		if errors.As(err, &userNotFound) {
+			return gateway.RetrieveUserAttributesFromTokenOutput{}, core_err.NewResourceNotFoundErr("user")
+		}
+
+		var userNotConfirmedErr *types.UserNotConfirmedException
+		if errors.As(err, &userNotConfirmedErr) {
+			return gateway.RetrieveUserAttributesFromTokenOutput{}, custom_err.NewUserNotConfirmedErr()
+		}
+
 		return gateway.RetrieveUserAttributesFromTokenOutput{}, err
 	}
 
