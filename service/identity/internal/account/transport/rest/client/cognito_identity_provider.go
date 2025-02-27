@@ -8,9 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cognito "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
-	"github.com/charmingruby/impr/lib/pkg/client/integration"
-	"github.com/charmingruby/impr/lib/pkg/client/service/awsc"
-	"github.com/charmingruby/impr/lib/pkg/core_err"
+
+	"github.com/charmingruby/impr/lib/pkg/core/core_err"
+	"github.com/charmingruby/impr/lib/pkg/http/client/integration"
+	"github.com/charmingruby/impr/lib/pkg/http/client/service/awsc"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/model"
 	"github.com/charmingruby/impr/service/identity/internal/shared/custom_err"

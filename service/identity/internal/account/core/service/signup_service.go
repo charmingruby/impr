@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/charmingruby/impr/lib/pkg/core_err"
+	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/gateway"
 	"github.com/charmingruby/impr/service/identity/pkg/helper"
 )

@@ -3,8 +3,8 @@ package endpoint
 import (
 	"errors"
 
-	"github.com/charmingruby/impr/lib/pkg/core_err"
-	"github.com/charmingruby/impr/lib/pkg/server/rest"
+	"github.com/charmingruby/impr/lib/pkg/core/core_err"
+	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/validation"
 	"github.com/charmingruby/impr/service/identity/internal/account/core/service"
 	"github.com/charmingruby/impr/service/identity/internal/shared/custom_err"

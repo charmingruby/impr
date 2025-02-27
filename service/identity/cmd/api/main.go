@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/charmingruby/impr/lib/pkg/client/service/awsc"
-	"github.com/charmingruby/impr/lib/pkg/server/rest"
+	"github.com/charmingruby/impr/lib/pkg/http/client/service/awsc"
+	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/service/identity/config"
 	"github.com/charmingruby/impr/service/identity/internal/account"
 	"github.com/charmingruby/impr/service/identity/internal/account/transport/rest/client"
