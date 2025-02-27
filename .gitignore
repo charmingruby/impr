@@ -3,3 +3,6 @@ tmp
 
 # environment file
 .env
+
+# docker files
+.docker

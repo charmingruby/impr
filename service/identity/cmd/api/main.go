@@ -17,11 +17,13 @@ func main() {
 
 	cfg, err := config.New()
 	if err != nil {
+		logger.Log.Error(err.Error())
 		panic(err)
 	}
 
 	cognitoCl, err := awsc.NewCognitoClient(cfg.Cognito.AppClientID, cfg.Cognito.UserPoolID)
 	if err != nil {
+		logger.Log.Error(err.Error())
 		panic(err)
 	}
 

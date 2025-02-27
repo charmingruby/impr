@@ -1,6 +1,7 @@
 go 1.23.2
 
 use (
-	./service/identity
 	./lib
+	./service/identity
+	./service/audit
 )

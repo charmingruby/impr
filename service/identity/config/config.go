@@ -1,15 +1,14 @@
 package config
 
 import (
-	"log"
-
 	env "github.com/caarlos0/env/v6"
+	"github.com/charmingruby/impr/service/identity/pkg/logger"
 	"github.com/joho/godotenv"
 )
 
 func New() (Config, error) {
 	if err := godotenv.Load(); err != nil {
-		log.Println(".env file found")
+		logger.Log.Info(".env file found")
 	}
 
 	environment := environment{}
