@@ -26,21 +26,30 @@ func New() (Config, error) {
 			MongoURL:      environment.MongoURL,
 			MongoDatabase: environment.MongoDatabase,
 		},
+		Kafka: kafkaConfig{
+			BrokerURL:        environment.KafkaBrokerURL,
+			GroupID:          environment.KafkaGroupID,
+			CreateAuditTopic: environment.KafkaCreateAuditTopic,
+		},
 	}
 
 	return cfg, nil
 }
 
 type environment struct {
-	ServerHost    string `env:"SERVER_HOST,required"`
-	ServerPort    string `env:"SERVER_PORT,required"`
-	MongoURL      string `env:"MONGO_URL,required"`
-	MongoDatabase string `env:"MONGO_DB,required"`
+	ServerHost            string `env:"SERVER_HOST,required"`
+	ServerPort            string `env:"SERVER_PORT,required"`
+	MongoURL              string `env:"MONGO_URL,required"`
+	MongoDatabase         string `env:"MONGO_DB,required"`
+	KafkaBrokerURL        string `env:"KAFKA_BROKER_URL,required"`
+	KafkaGroupID          string `env:"KAFKA_GROUP_ID,required"`
+	KafkaCreateAuditTopic string `env:"KAFKA_CREATE_AUDIT_TOPIC,required"`
 }
 
 type Config struct {
 	Server serverConfig
 	Mongo  mongoConfig
+	Kafka  kafkaConfig
 }
 
 type serverConfig struct {
@@ -51,4 +60,11 @@ type serverConfig struct {
 type mongoConfig struct {
 	MongoURL      string
 	MongoDatabase string
+}
+
+type kafkaConfig struct {
+	BrokerURL string
+	GroupID   string
+
+	CreateAuditTopic string
 }

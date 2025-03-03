@@ -21,5 +21,9 @@ func New(url, database string) (*mongo.Database, error) {
 
 	db := cl.Database(database)
 
+	if err := db.Client().Ping(context.Background(), nil); err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }

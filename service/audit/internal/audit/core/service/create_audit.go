@@ -8,10 +8,10 @@ import (
 )
 
 type CreateAuditParams struct {
-	Context      string
-	Subject      string
-	Content      string
-	DispatchedAt time.Time
+	Context      string    `json:"context"`
+	Subject      string    `json:"subject"`
+	Content      string    `json:"content"`
+	DispatchedAt time.Time `json:"dispatched_at"`
 }
 
 func (s *Service) CreateAudit(in CreateAuditParams) error {
