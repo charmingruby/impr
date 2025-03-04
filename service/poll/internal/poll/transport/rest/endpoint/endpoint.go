@@ -1,8 +1,8 @@
 package endpoint
 
 import (
+	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
 	"github.com/go-chi/chi/v5"
-	"github.com/charmingruby/bob/internal/example/core/service"
 )
 
 type Endpoint struct {
@@ -18,5 +18,5 @@ func New(r *chi.Mux, service *service.Service) *Endpoint {
 }
 
 func (e *Endpoint) Register() {
-	e.router.Post("/example/greeting", e.makeGreetingHandler())
+	e.router.Post("/poll/greeting", e.makeGreetingHandler())
 }

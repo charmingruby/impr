@@ -6,7 +6,7 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
-type Example struct {
+type Poll struct {
 	ID        string     `json:"id" db:"id"`
 	Name      string     `json:"name" db:"name"`
 	CreatedAt time.Time  `json:"created_at" db:"created_at"`
@@ -14,12 +14,12 @@ type Example struct {
 	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at"`
 }
 
-type NewExampleInput struct {
+type NewPollInput struct {
 	Name string
 }
 
-func NewExample(in NewExampleInput) *Example {
-	return &Example{
+func NewPoll(in NewPollInput) *Poll {
+	return &Poll{
 		ID:        ulid.Make().String(),
 		Name:      in.Name,
 		CreatedAt: time.Now(),
@@ -28,8 +28,8 @@ func NewExample(in NewExampleInput) *Example {
 	}
 }
 
-func FromExample(in Example) *Example {
-    return &Example{
+func FromPoll(in Poll) *Poll {
+    return &Poll{
         ID:        in.ID,
         Name:      in.Name,
         CreatedAt: in.CreatedAt,
@@ -38,7 +38,7 @@ func FromExample(in Example) *Example {
     }
 }
 
-func (m *Example) SoftDelete() {
+func (m *Poll) SoftDelete() {
 	now := time.Now()
 
 	m.UpdatedAt = &now

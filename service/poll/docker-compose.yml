@@ -14,16 +14,3 @@ services:
       interval: 5s
       retries: 5
       timeout: 5s
-
-  app:
-    image: bob-app # or bob-app:latest to run from docker registry
-    depends_on:
-      postgres:
-        condition: service_healthy
-    build: # remove to run from docker registry
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "${SERVER_PORT}:3000"
-    env_file:
-      - .env

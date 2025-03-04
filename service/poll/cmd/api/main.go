@@ -11,11 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/charmingruby/bob/config"
-	"github.com/charmingruby/bob/internal/example"
-	"github.com/charmingruby/bob/internal/shared/transport/rest"
-	"github.com/charmingruby/bob/pkg/postgres"
-	"github.com/charmingruby/bob/internal/shared/transport/rest/endpoint"
+	"github.com/charmingruby/impr/service/poll/config"
+	"github.com/charmingruby/impr/service/poll/internal/poll"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/endpoint"
+	"github.com/charmingruby/impr/service/poll/pkg/postgres"
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -89,13 +89,13 @@ func main() {
 }
 
 func initModules(r *chi.Mux, db *sqlx.DB) {
-	exampleSvc, err := example.NewService(db)
+	pollSvc, err := poll.NewService(db)
 	if err != nil {
-		slog.Error(fmt.Sprintf("MODULE[example]: %v", err))
+		slog.Error(fmt.Sprintf("MODULE[polls]: %v", err))
 		os.Exit(1)
 	}
-	
-	example.NewHTTPHandler(r, exampleSvc)
+
+	poll.NewHTTPHandler(r, pollSvc)
 
 	endpoint.New(r).Register()
 }

@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/charmingruby/bob/internal/shared/validation"
+	"github.com/charmingruby/impr/service/poll/internal/shared/validation"
 )
 
 func ParseRequest[T any](request *http.Request) (*T, error) {

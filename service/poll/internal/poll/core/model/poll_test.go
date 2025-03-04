@@ -8,12 +8,12 @@ import (
     "github.com/oklog/ulid/v2"
 )
 
-func Test_NewExample(t *testing.T) {
-    t.Run("it should be able to create a new Example", func(t *testing.T) {
-        in := NewExampleInput{
-            Name: "Example",
+func Test_NewPoll(t *testing.T) {
+    t.Run("it should be able to create a new Poll", func(t *testing.T) {
+        in := NewPollInput{
+            Name: "Poll",
         }
-        m := NewExample(in)
+        m := NewPoll(in)
 
         assert.NotEmpty(t, m.ID)
         assert.Equal(t, in.Name, m.Name)
@@ -23,16 +23,16 @@ func Test_NewExample(t *testing.T) {
     })
 }
 
-func Test_FromExample(t *testing.T) {
-    t.Run("it should be able to create a Example from input", func(t *testing.T) {
-        in := Example{
+func Test_FromPoll(t *testing.T) {
+    t.Run("it should be able to create a Poll from input", func(t *testing.T) {
+        in := Poll{
             ID:        ulid.Make().String(),
-            Name:      "Example",
+            Name:      "Poll",
             CreatedAt: time.Now(),
             UpdatedAt: nil,
             DeletedAt: nil,
         }
-        m := FromExample(in)
+        m := FromPoll(in)
 
         assert.Equal(t, in.ID, m.ID)
         assert.Equal(t, in.Name, m.Name)
@@ -42,19 +42,19 @@ func Test_FromExample(t *testing.T) {
     })
 }
 
-func Test_SoftDeleteExample(t *testing.T) {
-    t.Run("it should be able to soft delete a Example", func(t *testing.T) {
+func Test_SoftDeletePoll(t *testing.T) {
+    t.Run("it should be able to soft delete a Poll", func(t *testing.T) {
         now := time.Now()
 
-        in := Example{
+        in := Poll{
             ID:        ulid.Make().String(),
-            Name:      "Example",
+            Name:      "Poll",
             CreatedAt: now,
             UpdatedAt: nil,
             DeletedAt: nil,
         }
         
-        m := FromExample(in)
+        m := FromPoll(in)
 
         m.SoftDelete()
 

@@ -4,4 +4,5 @@ use (
 	./lib
 	./service/identity
 	./service/audit
+	./service/poll
 )

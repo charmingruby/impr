@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/charmingruby/bob/internal/example/core/service"
-	"github.com/charmingruby/bob/internal/example/transport/rest/dto/response"
-	"github.com/charmingruby/bob/internal/example/transport/rest/dto/request"
-	"github.com/charmingruby/bob/internal/shared/custom_err/core_err"
-	"github.com/charmingruby/bob/internal/shared/transport/rest"
+	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
+	"github.com/charmingruby/impr/service/poll/internal/poll/transport/rest/dto/request"
+	"github.com/charmingruby/impr/service/poll/internal/poll/transport/rest/dto/response"
+	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err/core_err"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest"
 )
 
 func (e *Endpoint) makeGreetingHandler() http.HandlerFunc {

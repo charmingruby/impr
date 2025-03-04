@@ -3,7 +3,7 @@ package sql_err
 import (
 	"fmt"
 
-	"github.com/charmingruby/bob/internal/shared/custom_err/database_err"
+	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err/database_err"
 )
 
 func NewPreparationErr(queryName string, repository string, err error) *database_err.PersistenceErr {

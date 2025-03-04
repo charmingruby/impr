@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS examples
+CREATE TABLE IF NOT EXISTS polls
 (
 	id varchar PRIMARY KEY NOT NULL,
 	name varchar NOT NULL,

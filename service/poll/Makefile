@@ -3,11 +3,11 @@ DATABASE_PORT ?= 5432
 DATABASE_USER ?= postgres
 DATABASE_PASSWORD ?= postgres
 DATABASE_SSL ?= disable
-DATABASE_DATABASE = bob-db
+DATABASE_DATABASE = impr-poll
 DATABASE_DSN := "postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DATABASE}?sslmode=${DATABASE_SSL}"
 MIGRATIONS_PATH="db/migration"
 
-DOCKER_IMAGE_NAME := bob-app
+DOCKER_IMAGE_NAME := impr-poll
 
 ###################
 # Database        #
