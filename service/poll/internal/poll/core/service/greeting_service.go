@@ -22,7 +22,6 @@ func (s *Service) Greeting(params GreetingParams) (GreetingResult, error) {
 		return GreetingResult{}, err
 	}
 
-	poll.SoftDelete()
 	if err := s.pollRepository.Delete(poll); err != nil {
 		return GreetingResult{}, err
 	}

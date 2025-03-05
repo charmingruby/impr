@@ -104,7 +104,7 @@ func (r *PollRepository) Delete(model *model.Poll) error {
 		return err
 	}
 
-	if _, err := stmt.Exec(model.DeletedAt, model.UpdatedAt, model.ID); err != nil {
+	if _, err := stmt.Exec(model.UpdatedAt, model.ID); err != nil {
 		return database_err.NewPersistenceErr(err, "poll delete", "postgres")
 	}
 
