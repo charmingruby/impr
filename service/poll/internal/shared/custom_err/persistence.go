@@ -1,4 +1,4 @@
-package database_err
+package custom_err
 
 import "fmt"
 

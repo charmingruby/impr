@@ -3,7 +3,8 @@ package repository
 import "github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 
 type PollRepository interface {
-	Store(model *model.Poll) error
 	FindByID(id string) (*model.Poll, error)
-	Delete(model *model.Poll) error
+	FindByNameAndOwnerID(name, ownerID string) (*model.Poll, error)
+	Store(model *model.Poll) error
+	Save(model *model.Poll) error
 }

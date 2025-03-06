@@ -4,8 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
-	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err/database_err"
-	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err/database_err/sql_err"
+	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -36,7 +35,7 @@ func NewPollRepository(db *sqlx.DB) (*PollRepository, error) {
 		stmt, err := db.Preparex(statement)
 		if err != nil {
 			return nil,
-				sql_err.NewPreparationErr(queryName, "poll", err)
+				custom_err.NewPreparationErr(queryName, "poll", err)
 		}
 
 		stmts[queryName] = stmt
@@ -58,7 +57,7 @@ func (r *PollRepository) statement(queryName string) (*sqlx.Stmt, error) {
 
 	if !ok {
 		return nil,
-			sql_err.NewStatementNotPreparedErr(queryName, "poll")
+			custom_err.NewStatementNotPreparedErr(queryName, "poll")
 	}
 
 	return stmt, nil
@@ -74,7 +73,7 @@ func (r *PollRepository) Store(model *model.Poll) error {
 		model.ID,
 		model.Name,
 	); err != nil {
-		return database_err.NewPersistenceErr(err, "poll store", "postgres")
+		return custom_err.NewPersistenceErr(err, "poll store", "postgres")
 	}
 
 	return nil
@@ -92,7 +91,7 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 			return nil, nil
 		}
 
-		return nil, database_err.NewPersistenceErr(err, "poll find_by_id", "postgres")
+		return nil, custom_err.NewPersistenceErr(err, "poll find_by_id", "postgres")
 	}
 
 	return &poll, nil
@@ -105,7 +104,7 @@ func (r *PollRepository) Delete(model *model.Poll) error {
 	}
 
 	if _, err := stmt.Exec(model.UpdatedAt, model.ID); err != nil {
-		return database_err.NewPersistenceErr(err, "poll delete", "postgres")
+		return custom_err.NewPersistenceErr(err, "poll delete", "postgres")
 	}
 
 	return nil
