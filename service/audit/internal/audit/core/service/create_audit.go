@@ -3,8 +3,8 @@ package service
 import (
 	"time"
 
+	"github.com/charmingruby/impr/lib/pkg/core/id"
 	"github.com/charmingruby/impr/service/audit/internal/audit/core/model"
-	"github.com/charmingruby/impr/service/audit/internal/shared/id"
 )
 
 type CreateAuditParams struct {

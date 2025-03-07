@@ -1,6 +1,8 @@
 package service
 
 import (
+	"testing"
+
 	"github.com/charmingruby/impr/service/audit/internal/audit/core/model"
 	"github.com/charmingruby/impr/service/audit/test/memory"
 	"github.com/stretchr/testify/suite"
@@ -20,4 +22,8 @@ func (s *Suite) SetupTest() {
 
 func (s *Suite) SetupSubTest() {
 	s.repo.Items = []model.Audit{}
+}
+
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(Suite))
 }
