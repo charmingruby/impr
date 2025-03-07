@@ -46,6 +46,20 @@ func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Po
 	return nil, nil
 }
 
+func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, error) {
+	for _, item := range r.Items {
+		if item.ID == id && item.OwnerID == ownerID {
+			return &item, nil
+		}
+	}
+
+	if !r.IsHealthy {
+		return nil, fmt.Errorf("poll datasource is unhealthy")
+	}
+
+	return nil, nil
+}
+
 func (r *PollRepository) Store(model *model.Poll) error {
 	if !r.IsHealthy {
 		return fmt.Errorf("poll datasource is unhealthy")

@@ -31,3 +31,17 @@ func NewMultipleProcessErr(errs []ProcessErr) *MultipleProcessErr {
 func (e *MultipleProcessErr) Error() string {
 	return e.Message
 }
+
+type InvalidActionErr struct {
+	Message string `json:"message"`
+}
+
+func NewInvalidActionErr(msg string) *InvalidActionErr {
+	return &InvalidActionErr{
+		Message: msg,
+	}
+}
+
+func (e *InvalidActionErr) Error() string {
+	return e.Message
+}
