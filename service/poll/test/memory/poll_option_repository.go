@@ -21,7 +21,6 @@ func NewPollOptionRepository() *PollOptionRepository {
 func (r *PollOptionRepository) FindByContentAndPollID(content, pollID string) (*model.PollOption, error) {
 	for _, item := range r.Items {
 		if item.Content == content && item.PollID == pollID {
-			println("acheu")
 			return &item, nil
 		}
 	}
@@ -41,4 +40,20 @@ func (r *PollOptionRepository) Store(model *model.PollOption) error {
 	r.Items = append(r.Items, *model)
 
 	return nil
+}
+
+func (r *PollOptionRepository) FindAllByPollID(pollID string) ([]model.PollOption, error) {
+	var opts []model.PollOption
+
+	for _, item := range r.Items {
+		if item.PollID == pollID {
+			opts = append(opts, item)
+		}
+	}
+
+	if !r.IsHealthy {
+		return nil, fmt.Errorf("poll option datasource is unhealthy")
+	}
+
+	return opts, nil
 }
