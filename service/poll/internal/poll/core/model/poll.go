@@ -13,8 +13,8 @@ const (
 
 type Poll struct {
 	ID             string    `json:"id" db:"id"`
-	Name           string    `json:"name" db:"name"`
-	Description    string    `json:"description" db:"description"`
+	Title          string    `json:"title" db:"title"`
+	Question       string    `json:"question" db:"question"`
 	Status         string    `json:"status" db:"status"`
 	ExpirationTime int       `json:"expiration_time" db:"expiration_time"`
 	OwnerID        string    `json:"owner_id" db:"owner_id"`
@@ -23,8 +23,8 @@ type Poll struct {
 }
 
 type NewPollInput struct {
-	Name           string
-	Description    string
+	Title          string
+	Question       string
 	ExpirationTime int
 	OwnerID        string
 }
@@ -32,8 +32,8 @@ type NewPollInput struct {
 func NewPoll(in NewPollInput) *Poll {
 	return &Poll{
 		ID:             ulid.Make().String(),
-		Name:           in.Name,
-		Description:    in.Description,
+		Title:          in.Title,
+		Question:       in.Question,
 		Status:         POLL_OPEN_STATUS,
 		ExpirationTime: in.ExpirationTime,
 		OwnerID:        in.OwnerID,

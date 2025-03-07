@@ -3,15 +3,21 @@ package service
 import "github.com/charmingruby/impr/service/poll/internal/poll/core/repository"
 
 type Service struct {
-	pollRepository repository.PollRepository
+	pollRepository       repository.PollRepository
+	pollOptionRepository repository.PollOptionRepository
 }
 
 type Input struct {
-	PollRepository repository.PollRepository
+	PollRepository       repository.PollRepository
+	PollOptionRepository repository.PollOptionRepository
 }
 
-func New(in Input) *Service {
+func New(
+	pollRepository repository.PollRepository,
+	pollOptionRepository repository.PollOptionRepository,
+) *Service {
 	return &Service{
-		pollRepository: in.PollRepository,
+		pollRepository:       pollRepository,
+		pollOptionRepository: pollOptionRepository,
 	}
 }

@@ -71,7 +71,7 @@ func (r *PollRepository) Store(model *model.Poll) error {
 
 	if _, err := stmt.Exec(
 		model.ID,
-		model.Name,
+		model.Title,
 	); err != nil {
 		return custom_err.NewPersistenceErr(err, "poll store", "postgres")
 	}

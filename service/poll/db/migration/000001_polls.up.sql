@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS polls
 (
     id varchar PRIMARY KEY NOT NULL,
-    name varchar NOT NULL,
-    description text,
+    title varchar NOT NULL,
+    question text,
 	status varchar NOT NULL,
     expiration_time integer NOT NULL,
     owner_id varchar NOT NULL,

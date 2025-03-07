@@ -9,8 +9,8 @@ import (
 func Test_NewPoll(t *testing.T) {
 	t.Run("it should be able to create a new Poll", func(t *testing.T) {
 		in := NewPollInput{
-			Name:           "Poll",
-			Description:    "Poll Description",
+			Title:          "Poll",
+			Question:       "Is this a poll?",
 			ExpirationTime: 1,
 			OwnerID:        "owner_id",
 		}
@@ -18,8 +18,8 @@ func Test_NewPoll(t *testing.T) {
 		m := NewPoll(in)
 
 		assert.NotEmpty(t, m.ID)
-		assert.Equal(t, in.Name, m.Name)
-		assert.Equal(t, in.Description, m.Description)
+		assert.Equal(t, in.Title, m.Title)
+		assert.Equal(t, in.Question, m.Question)
 		assert.Equal(t, POLL_OPEN_STATUS, m.Status)
 		assert.Equal(t, in.ExpirationTime, m.ExpirationTime)
 		assert.Equal(t, in.OwnerID, m.OwnerID)
