@@ -13,13 +13,15 @@ type Suite struct {
 
 	pollRepo   *memory.PollRepository
 	optionRepo *memory.PollOptionRepository
+	voteRepo   *memory.VoteRepository
 	svc        *Service
 }
 
 func (s *Suite) SetupTest() {
 	s.pollRepo = memory.NewPollRepository()
 	s.optionRepo = memory.NewPollOptionRepository()
-	s.svc = New(s.pollRepo, s.optionRepo)
+	s.voteRepo = memory.NewVoteRepository()
+	s.svc = New(s.pollRepo, s.optionRepo, s.voteRepo)
 }
 
 func (s *Suite) SetupSubTest() {
@@ -28,6 +30,9 @@ func (s *Suite) SetupSubTest() {
 
 	s.optionRepo.Items = []model.PollOption{}
 	s.optionRepo.IsHealthy = true
+
+	s.voteRepo.Items = []model.Vote{}
+	s.voteRepo.IsHealthy = true
 }
 
 func TestSuite(t *testing.T) {

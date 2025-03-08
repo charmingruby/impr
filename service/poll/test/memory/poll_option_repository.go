@@ -32,6 +32,20 @@ func (r *PollOptionRepository) FindByContentAndPollID(content, pollID string) (*
 	return nil, nil
 }
 
+func (r *PollOptionRepository) FindByID(id string) (*model.PollOption, error) {
+	for _, item := range r.Items {
+		if item.ID == id {
+			return &item, nil
+		}
+	}
+
+	if !r.IsHealthy {
+		return nil, fmt.Errorf("poll option datasource is unhealthy")
+	}
+
+	return nil, nil
+}
+
 func (r *PollOptionRepository) Store(model *model.PollOption) error {
 	if !r.IsHealthy {
 		return fmt.Errorf("poll option datasource is unhealthy")

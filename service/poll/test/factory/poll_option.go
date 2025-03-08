@@ -9,7 +9,6 @@ import (
 )
 
 func MakePollOption(override model.PollOption) model.PollOption {
-
 	return model.PollOption{
 		ID:        helper.Ternary(override.ID == "", id.New(), override.ID),
 		Content:   helper.Ternary(override.Content == "", "Red", override.Content),

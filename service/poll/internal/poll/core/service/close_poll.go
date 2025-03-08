@@ -14,7 +14,7 @@ type ClosePollParams struct {
 }
 
 func (s *Service) ClosePoll(params ClosePollParams) error {
-	poll, err := s.pollRepository.FindByIDAndOwnerID(params.PollID, params.OwnerID)
+	poll, err := s.pollRepo.FindByIDAndOwnerID(params.PollID, params.OwnerID)
 
 	if err != nil {
 		return custom_err.NewPersistenceErr(err, "find by id and owner id", "poll")
@@ -31,7 +31,7 @@ func (s *Service) ClosePoll(params ClosePollParams) error {
 	poll.Status = model.POLL_CLOSED_STATUS
 	poll.UpdatedAt = time.Now()
 
-	if err = s.pollRepository.Save(poll); err != nil {
+	if err = s.pollRepo.Save(poll); err != nil {
 		return custom_err.NewPersistenceErr(err, "save", "poll")
 	}
 

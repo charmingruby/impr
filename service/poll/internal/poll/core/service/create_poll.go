@@ -15,7 +15,7 @@ type CreatePollParams struct {
 }
 
 func (s *Service) CreatePoll(params CreatePollParams) error {
-	pollExists, err := s.pollRepository.FindByTitleAndOwnerID(params.Title, params.OwnerID)
+	pollExists, err := s.pollRepo.FindByTitleAndOwnerID(params.Title, params.OwnerID)
 
 	if err != nil {
 		return custom_err.NewPersistenceErr(err, "find by title and owner id", "poll")
@@ -32,14 +32,14 @@ func (s *Service) CreatePoll(params CreatePollParams) error {
 		ExpirationTime: params.ExpirationTimeInMS,
 	})
 
-	if err := s.pollRepository.Store(poll); err != nil {
+	if err := s.pollRepo.Store(poll); err != nil {
 		return custom_err.NewPersistenceErr(err, "store", "poll")
 	}
 
 	var optionsErrs []custom_err.ProcessErr
 
 	for _, option := range params.Options {
-		optExists, err := s.pollOptionRepository.FindByContentAndPollID(option, poll.ID)
+		optExists, err := s.optionRepo.FindByContentAndPollID(option, poll.ID)
 		if err != nil {
 			optionsErrs = append(optionsErrs, custom_err.ProcessErr{
 				Identitifer: option,
@@ -63,7 +63,7 @@ func (s *Service) CreatePoll(params CreatePollParams) error {
 			PollID:  poll.ID,
 		})
 
-		if err := s.pollOptionRepository.Store(opt); err != nil {
+		if err := s.optionRepo.Store(opt); err != nil {
 			optionsErrs = append(optionsErrs, custom_err.ProcessErr{
 				Identitifer: option,
 				Reason:      custom_err.NewPersistenceErr(err, "store", "poll option").Error(),

@@ -16,7 +16,7 @@ type GetPollDetailsResult struct {
 }
 
 func (s *Service) GetPollDetails(params GetPollDetailsParams) (GetPollDetailsResult, error) {
-	poll, err := s.pollRepository.FindByID(params.PollID)
+	poll, err := s.pollRepo.FindByID(params.PollID)
 
 	if err != nil {
 		return GetPollDetailsResult{}, custom_err.NewPersistenceErr(err, "find by id", "poll")
@@ -26,7 +26,7 @@ func (s *Service) GetPollDetails(params GetPollDetailsParams) (GetPollDetailsRes
 		return GetPollDetailsResult{}, core_err.NewResourceNotFoundErr("poll")
 	}
 
-	options, err := s.pollOptionRepository.FindAllByPollID(params.PollID)
+	options, err := s.optionRepo.FindAllByPollID(params.PollID)
 
 	if err != nil {
 		return GetPollDetailsResult{}, custom_err.NewPersistenceErr(err, "find all by poll id", "poll option")
