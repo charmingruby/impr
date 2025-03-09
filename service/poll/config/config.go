@@ -1,7 +1,10 @@
 package config
 
 import (
+	"log/slog"
+
 	env "github.com/caarlos0/env/v6"
+	"github.com/joho/godotenv"
 )
 
 type environment struct {
@@ -14,16 +17,20 @@ type environment struct {
 }
 
 func New() (Config, error) {
+	if err := godotenv.Load(); err != nil {
+		slog.Warn("CONFIGURATION: .env file not found")
+	}
+
 	environment := environment{}
 	if err := env.Parse(&environment); err != nil {
 		return Config{}, err
 	}
 
 	cfg := Config{
-		ServerConfig: serverConfig{
+		Server: serverConfig{
 			Port: environment.ServerPort,
 		},
-		PostgresConfig: postgresConfig{
+		Postgres: postgresConfig{
 			User:         environment.DatabaseUser,
 			Password:     environment.DatabasePassword,
 			Host:         environment.DatabaseHost,
@@ -36,8 +43,8 @@ func New() (Config, error) {
 }
 
 type Config struct {
-	ServerConfig   serverConfig
-	PostgresConfig postgresConfig
+	Server   serverConfig
+	Postgres postgresConfig
 }
 
 type serverConfig struct {

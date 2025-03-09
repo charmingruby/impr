@@ -31,9 +31,9 @@ func main() {
 
 	identityProviderClient := client.NewCognitoIdentityProvider(cognitoCl)
 
-	accountSvc := account.NewService(identityProviderClient)
+	svc := account.NewService(identityProviderClient)
 
-	account.NewRestHandler(router, accountSvc).Register()
+	account.NewRestHandler(router, svc).Register()
 
 	restServer := rest.New(router, cfg.Server.Host, cfg.Server.Port)
 

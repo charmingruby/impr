@@ -1,0 +1,11 @@
+### Create Poll
+POST http://localhost:3001/api/poll HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Best Color",
+    "question": "What is the best color?",
+    "expiration_time_in_ms": 1000000,
+    "owner_id": "1",
+    "options": ["Red", "Blue", "Green"]
+}

@@ -14,15 +14,15 @@ type CreatePollParams struct {
 	Options            []string
 }
 
-func (s *Service) CreatePoll(params CreatePollParams) error {
+func (s *Service) CreatePoll(params CreatePollParams) (string, error) {
 	pollExists, err := s.pollRepo.FindByTitleAndOwnerID(params.Title, params.OwnerID)
 
 	if err != nil {
-		return custom_err.NewPersistenceErr(err, "find by title and owner id", "poll")
+		return "", custom_err.NewPersistenceErr(err, "find by title and owner id", "poll")
 	}
 
 	if pollExists != nil {
-		return core_err.NewConflictErr("title")
+		return "", core_err.NewConflictErr("title")
 	}
 
 	poll := model.NewPoll(model.NewPollInput{
@@ -33,7 +33,7 @@ func (s *Service) CreatePoll(params CreatePollParams) error {
 	})
 
 	if err := s.pollRepo.Store(poll); err != nil {
-		return custom_err.NewPersistenceErr(err, "store", "poll")
+		return "", custom_err.NewPersistenceErr(err, "store", "poll")
 	}
 
 	var optionsErrs []custom_err.ProcessErr
@@ -74,8 +74,8 @@ func (s *Service) CreatePoll(params CreatePollParams) error {
 	}
 
 	if len(optionsErrs) > 0 {
-		return custom_err.NewMultipleProcessErr(optionsErrs)
+		return "", custom_err.NewMultipleProcessErr(optionsErrs)
 	}
 
-	return nil
+	return poll.ID, nil
 }

@@ -17,10 +17,11 @@ func (s *Suite) Test_Service_CreatePoll() {
 			Options:            []string{"Red", "Green"},
 		}
 
-		err := s.svc.CreatePoll(params)
+		pollID, err := s.svc.CreatePoll(params)
 
 		s.NoError(err)
 		s.Equal(1, len(s.pollRepo.Items))
+		s.Equal(pollID, s.pollRepo.Items[0].ID)
 		s.Equal(s.pollRepo.Items[0].Title, params.Title)
 		s.Equal(2, len(s.optionRepo.Items))
 		s.Equal(s.optionRepo.Items[0].Content, params.Options[0])
@@ -41,7 +42,7 @@ func (s *Suite) Test_Service_CreatePoll() {
 			Options:            []string{"Red", "Green"},
 		}
 
-		err = s.svc.CreatePoll(params)
+		_, err = s.svc.CreatePoll(params)
 
 		s.Error(err)
 		s.Equal(core_err.NewConflictErr("title").Error(), err.Error())
@@ -56,7 +57,7 @@ func (s *Suite) Test_Service_CreatePoll() {
 			Options:            []string{"Red", "Red"},
 		}
 
-		err := s.svc.CreatePoll(params)
+		_, err := s.svc.CreatePoll(params)
 
 		s.Error(err)
 
