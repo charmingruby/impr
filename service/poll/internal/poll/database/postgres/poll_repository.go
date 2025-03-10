@@ -9,22 +9,28 @@ import (
 )
 
 const (
-	createPoll   = "create poll"
-	findPollByID = "find poll by id"
-	deletePoll   = "delete poll"
+	findPollByID              = "find poll by id"
+	findPollByIDAndOwnerID    = "find poll by id and owner id"
+	findPollByTitleAndOwnerID = "find poll by title and owner id"
+	createPoll                = "create poll"
+	updatePoll                = "update poll"
 )
 
 func pollQueries() map[string]string {
 	return map[string]string{
-		createPoll: `INSERT INTO polls
-		(id, name)
-		VALUES ($1, $2)
-		RETURNING *`,
 		findPollByID: `SELECT * FROM polls 
 		WHERE id = $1`,
-		deletePoll: `UPDATE polls
-		SET deleted_at = $1, updated_at = $2
-		WHERE id = $3 AND deleted_at IS NULL`,
+		findPollByIDAndOwnerID: `SELECT * FROM polls
+		WHERE id = $1 AND owner_id = $2`,
+		findPollByTitleAndOwnerID: `SELECT * FROM polls
+		WHERE title = $1 AND owner_id = $2`,
+		createPoll: `INSERT INTO polls
+		(id, title, question, status, expiration_time, owner_id)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING *`,
+		updatePoll: `UPDATE polls
+		SET status = $1 AND updated_at = $2
+		WHERE id = $3`,
 	}
 }
 
@@ -72,6 +78,10 @@ func (r *PollRepository) Store(model *model.Poll) error {
 	if _, err := stmt.Exec(
 		model.ID,
 		model.Title,
+		model.Question,
+		model.Status,
+		model.ExpirationTime,
+		model.OwnerID,
 	); err != nil {
 		return custom_err.NewPersistenceErr(err, "poll store", "postgres")
 	}
@@ -97,14 +107,50 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 	return &poll, nil
 }
 
-func (r *PollRepository) Delete(model *model.Poll) error {
-	stmt, err := r.statement(deletePoll)
+func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, error) {
+	stmt, err := r.statement(findPollByIDAndOwnerID)
+	if err != nil {
+		return nil, err
+	}
+
+	var poll model.Poll
+	if err := stmt.Get(&poll, id, ownerID); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, custom_err.NewPersistenceErr(err, "poll find_by_id_and_owner_id", "postgres")
+	}
+
+	return &poll, nil
+}
+
+func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Poll, error) {
+	stmt, err := r.statement(findPollByTitleAndOwnerID)
+	if err != nil {
+		return nil, err
+	}
+
+	var poll model.Poll
+	if err := stmt.Get(&poll, title, ownerID); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, custom_err.NewPersistenceErr(err, "poll find_by_title_and_owner_id", "postgres")
+	}
+
+	return &poll, nil
+}
+
+func (r *PollRepository) Save(model *model.Poll) error {
+	stmt, err := r.statement(updatePoll)
 	if err != nil {
 		return err
 	}
 
-	if _, err := stmt.Exec(model.UpdatedAt, model.ID); err != nil {
-		return custom_err.NewPersistenceErr(err, "poll delete", "postgres")
+	if _, err := stmt.Exec(model.Status, model.UpdatedAt, model.ID); err != nil {
+		return custom_err.NewPersistenceErr(err, "poll update", "postgres")
 	}
 
 	return nil

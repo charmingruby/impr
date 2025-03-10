@@ -53,5 +53,7 @@ func NewResourceNotFoundErrResponse(ctx echo.Context, msg string) error {
 }
 
 func NewUnprocessableEntity(ctx echo.Context, msg string) error {
-	return ctx.JSON(http.StatusUnprocessableEntity, msg)
+	return ctx.JSON(http.StatusUnprocessableEntity, map[string]any{
+		"message": msg,
+	})
 }

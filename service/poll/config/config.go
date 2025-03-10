@@ -9,6 +9,7 @@ import (
 
 type environment struct {
 	ServerPort       string `env:"SERVER_PORT,required"`
+	ServerHost       string `env:"SERVER_HOST,required"`
 	DatabaseUser     string `env:"DATABASE_USER,required"`
 	DatabasePassword string `env:"DATABASE_PASSWORD,required"`
 	DatabaseHost     string `env:"DATABASE_HOST,required"`
@@ -29,6 +30,7 @@ func New() (Config, error) {
 	cfg := Config{
 		Server: serverConfig{
 			Port: environment.ServerPort,
+			Host: environment.ServerHost,
 		},
 		Postgres: postgresConfig{
 			User:         environment.DatabaseUser,

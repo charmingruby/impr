@@ -6,9 +6,9 @@ import (
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/validation"
-	"github.com/charmingruby/impr/service/identity/pkg/logger"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
+	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
 
