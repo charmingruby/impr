@@ -9,7 +9,6 @@ import (
 	"github.com/charmingruby/impr/service/poll/internal/poll"
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/charmingruby/impr/service/poll/pkg/postgres"
-	"github.com/charmingruby/impr/service/poll/test/memory"
 	"github.com/labstack/echo/v4"
 )
 
@@ -46,8 +45,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	optionRepo := memory.NewPollOptionRepository()
-	voteRepo := memory.NewVoteRepository()
+	optionRepo, err := poll.NewPollOptionRepository(db)
+	if err != nil {
+		logger.Log.Error(err.Error())
+
+		os.Exit(1)
+	}
+
+	voteRepo, err := poll.NewVoteRepository(db)
+	if err != nil {
+		logger.Log.Error(err.Error())
+
+		os.Exit(1)
+	}
 
 	svc := poll.NewService(pollRepo, optionRepo, voteRepo)
 

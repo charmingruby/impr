@@ -13,6 +13,14 @@ func NewPollRepository(db *sqlx.DB) (repository.PollRepository, error) {
 	return postgres.NewPollRepository(db)
 }
 
+func NewPollOptionRepository(db *sqlx.DB) (repository.PollOptionRepository, error) {
+	return postgres.NewPollOptionRepository(db)
+}
+
+func NewVoteRepository(db *sqlx.DB) (repository.VoteRepository, error) {
+	return postgres.NewVoteRepository(db)
+}
+
 func NewService(
 	pollRepo repository.PollRepository,
 	optionRepo repository.PollOptionRepository,

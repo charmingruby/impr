@@ -95,8 +95,8 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 		return nil, err
 	}
 
-	var poll model.Poll
-	if err := stmt.Get(&poll, id); err != nil {
+	var model model.Poll
+	if err := stmt.Get(&model, id); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -104,7 +104,7 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 		return nil, custom_err.NewPersistenceErr(err, "poll find_by_id", "postgres")
 	}
 
-	return &poll, nil
+	return &model, nil
 }
 
 func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, error) {
@@ -113,8 +113,8 @@ func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, er
 		return nil, err
 	}
 
-	var poll model.Poll
-	if err := stmt.Get(&poll, id, ownerID); err != nil {
+	var model model.Poll
+	if err := stmt.Get(&model, id, ownerID); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -122,7 +122,7 @@ func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, er
 		return nil, custom_err.NewPersistenceErr(err, "poll find_by_id_and_owner_id", "postgres")
 	}
 
-	return &poll, nil
+	return &model, nil
 }
 
 func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Poll, error) {
@@ -131,8 +131,8 @@ func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Po
 		return nil, err
 	}
 
-	var poll model.Poll
-	if err := stmt.Get(&poll, title, ownerID); err != nil {
+	var model model.Poll
+	if err := stmt.Get(&model, title, ownerID); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -140,7 +140,7 @@ func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Po
 		return nil, custom_err.NewPersistenceErr(err, "poll find_by_title_and_owner_id", "postgres")
 	}
 
-	return &poll, nil
+	return &model, nil
 }
 
 func (r *PollRepository) Save(model *model.Poll) error {
