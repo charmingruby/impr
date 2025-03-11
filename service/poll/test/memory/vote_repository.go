@@ -18,9 +18,9 @@ func NewVoteRepository() *VoteRepository {
 	}
 }
 
-func (r *VoteRepository) FindByPollIDAndUserID(pollOptionID, userID string) (*model.Vote, error) {
+func (r *VoteRepository) FindByPollIDAndUserID(pollID, userID string) (*model.Vote, error) {
 	for _, item := range r.Items {
-		if item.PollOptionID == pollOptionID && item.UserID == userID {
+		if item.PollID == pollID && item.UserID == userID {
 			return &item, nil
 		}
 	}

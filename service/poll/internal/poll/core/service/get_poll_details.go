@@ -11,8 +11,8 @@ type GetPollDetailsParams struct {
 }
 
 type GetPollDetailsResult struct {
-	Poll    model.Poll
-	Options []model.PollOption
+	Poll    model.Poll         `json:"poll"`
+	Options []model.PollOption `json:"options"`
 }
 
 func (s *Service) GetPollDetails(params GetPollDetailsParams) (GetPollDetailsResult, error) {

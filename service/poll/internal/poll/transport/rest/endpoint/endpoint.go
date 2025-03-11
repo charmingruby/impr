@@ -25,4 +25,7 @@ func (e *Endpoint) Register() {
 	api := e.r.Group("/api")
 
 	api.POST("/poll", e.makeCreatePollEndpoint())
+	api.GET("/poll/:poll_id", e.makeGetPollDetailsEndpoint())
+	api.PATCH("/poll/:poll_id/close", e.makeClosePollEndpoint())
+	api.POST("/poll/:poll_id/vote", e.makeVoteOnPollEndpoint())
 }

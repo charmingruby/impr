@@ -22,7 +22,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 		err = s.optionRepo.Store(&opt)
 		s.NoError(err)
 
-		err = s.svc.VoteOnPoll(VoteOnPollParams{
+		voteID, err := s.svc.VoteOnPoll(VoteOnPollParams{
 			PollID:       poll.ID,
 			PollOptionID: opt.ID,
 			UserID:       "valid-user-id",
@@ -30,6 +30,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.NoError(err)
 		s.Equal(1, len(s.voteRepo.Items))
+		s.Equal(voteID, s.voteRepo.Items[0].ID)
 		s.Equal("valid-user-id", s.voteRepo.Items[0].UserID)
 		s.Equal(poll.ID, s.voteRepo.Items[0].PollID)
 		s.Equal(opt.ID, s.voteRepo.Items[0].PollOptionID)
@@ -46,7 +47,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 		err := s.optionRepo.Store(&opt)
 		s.NoError(err)
 
-		err = s.svc.VoteOnPoll(VoteOnPollParams{
+		_, err = s.svc.VoteOnPoll(VoteOnPollParams{
 			PollID:       invalidPollID,
 			PollOptionID: opt.ID,
 			UserID:       "valid-user-id",
@@ -62,7 +63,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 		err := s.pollRepo.Store(&poll)
 		s.NoError(err)
 
-		err = s.svc.VoteOnPoll(VoteOnPollParams{
+		_, err = s.svc.VoteOnPoll(VoteOnPollParams{
 			PollID:       poll.ID,
 			PollOptionID: "invalid-option-id",
 			UserID:       "valid-user-id",
@@ -97,7 +98,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 		err = s.voteRepo.Store(&vote)
 		s.NoError(err)
 
-		err = s.svc.VoteOnPoll(VoteOnPollParams{
+		_, err = s.svc.VoteOnPoll(VoteOnPollParams{
 			PollID:       poll.ID,
 			PollOptionID: opt.ID,
 			UserID:       userID,
@@ -105,5 +106,31 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.Error(err)
 		s.Equal(custom_err.NewInvalidActionErr("vote already exists").Error(), err.Error())
+	})
+
+	s.Run("should return error if poll is closed", func() {
+		poll := factory.MakePoll(model.Poll{
+			Status: model.POLL_CLOSED_STATUS,
+		})
+
+		err := s.pollRepo.Store(&poll)
+		s.NoError(err)
+
+		opt := factory.MakePollOption(model.PollOption{
+			Content: "option 1",
+			PollID:  poll.ID,
+		})
+
+		err = s.optionRepo.Store(&opt)
+		s.NoError(err)
+
+		_, err = s.svc.VoteOnPoll(VoteOnPollParams{
+			PollID:       poll.ID,
+			PollOptionID: opt.ID,
+			UserID:       "valid-user-id",
+		})
+
+		s.Error(err)
+		s.Equal(custom_err.NewInvalidActionErr("poll is not open").Error(), err.Error())
 	})
 }

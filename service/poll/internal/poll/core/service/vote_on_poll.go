@@ -12,35 +12,39 @@ type VoteOnPollParams struct {
 	UserID       string
 }
 
-func (s *Service) VoteOnPoll(params VoteOnPollParams) error {
+func (s *Service) VoteOnPoll(params VoteOnPollParams) (string, error) {
 	poll, err := s.pollRepo.FindByID(params.PollID)
 
 	if err != nil {
-		return custom_err.NewPersistenceErr(err, "find by id", "poll")
+		return "", custom_err.NewPersistenceErr(err, "find by id", "poll")
 	}
 
 	if poll == nil {
-		return core_err.NewResourceNotFoundErr("poll")
+		return "", core_err.NewResourceNotFoundErr("poll")
 	}
 
-	voteExists, err := s.voteRepo.FindByPollIDAndUserID(params.PollOptionID, params.UserID)
+	if poll.Status != model.POLL_OPEN_STATUS {
+		return "", custom_err.NewInvalidActionErr("poll is not open")
+	}
+
+	voteExists, err := s.voteRepo.FindByPollIDAndUserID(params.PollID, params.UserID)
 
 	if err != nil {
-		return custom_err.NewPersistenceErr(err, "find vote by poll id and user id", "vote")
+		return "", custom_err.NewPersistenceErr(err, "find vote by poll id and user id", "vote")
 	}
 
 	if voteExists != nil {
-		return custom_err.NewInvalidActionErr("vote already exists")
+		return "", custom_err.NewInvalidActionErr("vote already exists")
 	}
 
 	option, err := s.optionRepo.FindByID(params.PollOptionID)
 
 	if err != nil {
-		return custom_err.NewPersistenceErr(err, "find by id", "poll option")
+		return "", custom_err.NewPersistenceErr(err, "find by id", "poll option")
 	}
 
 	if option == nil {
-		return core_err.NewResourceNotFoundErr("poll option")
+		return "", core_err.NewResourceNotFoundErr("poll option")
 	}
 
 	vote := model.NewVote(model.NewVoteInput{
@@ -50,8 +54,8 @@ func (s *Service) VoteOnPoll(params VoteOnPollParams) error {
 	})
 
 	if err := s.voteRepo.Store(vote); err != nil {
-		return custom_err.NewPersistenceErr(err, "store", "vote")
+		return "", custom_err.NewPersistenceErr(err, "store", "vote")
 	}
 
-	return nil
+	return vote.ID, nil
 }

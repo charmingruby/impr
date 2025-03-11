@@ -29,7 +29,7 @@ func pollQueries() map[string]string {
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING *`,
 		updatePoll: `UPDATE polls
-		SET status = $1 AND updated_at = $2
+		SET status = $1, updated_at = $2
 		WHERE id = $3`,
 	}
 }

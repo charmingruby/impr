@@ -3,9 +3,31 @@ POST http://localhost:3001/api/poll HTTP/1.1
 content-type: application/json
 
 {
-    "title": "Best Color",
+    "title": "Best of 3 Colors",
     "question": "What is the best color?",
     "expiration_time_in_ms": 1000000,
-    "owner_id": "1",
+    "owner_id": "sample-id",
     "options": ["Red", "Blue", "Green"]
+}
+
+###
+
+### Get Poll Details
+GET http://localhost:3001/api/poll/01JP3A5TMNC9J180ZVCAAF31TZ HTTP/1.1
+content-type: application/json
+
+###
+
+### Close Poll
+PATCH http://localhost:3001/api/poll/01JP3A2REWNYS2TH6AXW1YZ6SV/close HTTP/1.1
+content-type: application/json
+
+###
+
+### Vote on Poll
+POST http://localhost:3001/api/poll/01JP3A5TMNC9J180ZVCAAF31TZ/vote HTTP/1.1
+content-type: application/json
+
+{
+    "option_id": "01JP3A5TMTT40WYDWN4RSVGEPM"
 }

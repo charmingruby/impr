@@ -60,7 +60,7 @@ func (r *VoteRepository) statement(queryName string) (*sqlx.Stmt, error) {
 }
 
 func (r *VoteRepository) Store(model *model.Vote) error {
-	stmt, err := r.statement(createPoll)
+	stmt, err := r.statement(createVote)
 	if err != nil {
 		return err
 	}

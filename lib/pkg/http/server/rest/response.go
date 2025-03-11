@@ -49,7 +49,9 @@ func NewInternalServerErrorReponse(ctx echo.Context) error {
 }
 
 func NewResourceNotFoundErrResponse(ctx echo.Context, msg string) error {
-	return ctx.JSON(http.StatusNotFound, msg)
+	return ctx.JSON(http.StatusNotFound, map[string]any{
+		"message": msg,
+	})
 }
 
 func NewUnprocessableEntity(ctx echo.Context, msg string) error {
