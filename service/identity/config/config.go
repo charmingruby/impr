@@ -18,8 +18,10 @@ func New() (Config, error) {
 
 	cfg := Config{
 		Server: serverConfig{
-			Port: environment.ServerPort,
-			Host: environment.ServerHost,
+			RestPort: environment.RestServerPort,
+			RestHost: environment.RestServerHost,
+			GRPCPort: environment.GRPCServerPort,
+			GRPCHost: environment.GRPCServerHost,
 		},
 		Cognito: cognitoConfig{
 			AppClientID: environment.CognitoAppClientID,
@@ -31,8 +33,10 @@ func New() (Config, error) {
 }
 
 type environment struct {
-	ServerPort         string `env:"SERVER_PORT,required"`
-	ServerHost         string `env:"SERVER_HOST,required"`
+	RestServerPort     string `env:"REST_SERVER_PORT,required"`
+	RestServerHost     string `env:"REST_SERVER_HOST,required"`
+	GRPCServerPort     string `env:"GRPC_SERVER_PORT,required"`
+	GRPCServerHost     string `env:"GRPC_SERVER_HOST,required"`
 	CognitoAppClientID string `env:"COGNITO_APP_CLIENT_ID,required"`
 	CognitoUserPoolID  string `env:"COGNITO_USER_POLL_ID,required"`
 }
@@ -43,8 +47,10 @@ type Config struct {
 }
 
 type serverConfig struct {
-	Host string
-	Port string
+	RestHost string
+	RestPort string
+	GRPCHost string
+	GRPCPort string
 }
 
 type cognitoConfig struct {

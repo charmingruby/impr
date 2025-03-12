@@ -15,8 +15,8 @@ POST http://localhost:3000/api/auth/signin HTTP/1.1
 content-type: application/json
 
 {
-  "email": "",
-  "password": "Password!23"
+  "email": "gustavodiasa2121@gmail.com",
+  "password": "P@ssword!23"
 }
 
 ### Confirm Account
@@ -54,6 +54,6 @@ content-type: application/json
 
 {
   "email": "",
-  "confirmation_code": "074041",
-  "new_password": ""
+  "confirmation_code": "038630",
+  "new_password": "P@ssword!23"
 }

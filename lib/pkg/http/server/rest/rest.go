@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -30,4 +31,8 @@ func New(router *echo.Echo, host string, port string) *Server {
 
 func (s *Server) Start() error {
 	return s.HTTPServer.ListenAndServe()
+}
+
+func (s *Server) Stop(ctx context.Context) error {
+	return s.HTTPServer.Shutdown(ctx)
 }

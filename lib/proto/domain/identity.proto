@@ -5,8 +5,7 @@ package proto;
 option go_package = "lib/proto/gen/pb";
 
 message VerifyTokenPayload {
-    string id = 1;
-    string token = 2;
+    string token = 1;
 }
 
 message VerifyTokenResponse {
