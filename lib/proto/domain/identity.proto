@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "lib/proto/gen/pb";
+
+message VerifyTokenPayload {
+    string id = 1;
+    string token = 2;
+}
+
+message VerifyTokenResponse {
+    string id = 1;
+    bool is_valid = 2;
+}
+
+service IdentityService{
+    rpc VerifyToken(VerifyTokenPayload) returns (VerifyTokenResponse);
+}
