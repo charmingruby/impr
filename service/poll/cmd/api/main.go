@@ -2,14 +2,19 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/service/poll/config"
 	"github.com/charmingruby/impr/service/poll/internal/poll"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/grpc/client"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/middleware"
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/charmingruby/impr/service/poll/pkg/postgres"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -20,6 +25,21 @@ func main() {
 		logger.Log.Error(err.Error())
 		os.Exit(1)
 	}
+
+	logger.Log.Info(fmt.Sprintf("Connecting to gRPC Identity server at: %s:%s ...", cfg.IdentityIntegration.Host, cfg.IdentityIntegration.Port))
+
+	identityGRPCServerAddr := fmt.Sprintf("%s:%s", cfg.IdentityIntegration.Host, cfg.IdentityIntegration.Port)
+
+	gRPCConn, err := grpc.NewClient(identityGRPCServerAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("Unable to connect to server: %v", err)
+	}
+	defer gRPCConn.Close()
+
+	gRPCClient := client.New(gRPCConn)
+	gRPCClient.Register()
+
+	logger.Log.Info("Connected to gRPC Identity server successfully!")
 
 	logger.Log.Info("Connecting to Postgres...")
 
@@ -63,13 +83,19 @@ func main() {
 
 	router := echo.New()
 
-	poll.NewRestHandler(router, svc).Register()
+	authMiddleware := middleware.NewAuth(gRPCClient.Service)
+
+	poll.NewRestHandler(router, svc, authMiddleware).Register()
 
 	restServer := rest.New(router, cfg.Server.Host, cfg.Server.Port)
 
-	logger.Log.Info(fmt.Sprintf("Rest server is running at: %s:%s ...", cfg.Server.Host, cfg.Server.Port))
+	go func() {
+		logger.Log.Info(fmt.Sprintf("Rest server is running at: %s:%s ...", cfg.Server.Host, cfg.Server.Port))
 
-	if err := restServer.Start(); err != nil {
-		os.Exit(1)
-	}
+		if err := restServer.Start(); err != nil {
+			os.Exit(1)
+		}
+	}()
+
+	select {}
 }

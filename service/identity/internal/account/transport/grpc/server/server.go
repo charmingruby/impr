@@ -13,10 +13,11 @@ type Server struct {
 
 type Service struct {
 	pb.UnimplementedIdentityServiceServer
+
 	identityProviderClient *client.CognitoIdentityProvider
 }
 
-func NewServer(
+func New(
 	gRPCServer *grpc.Server,
 	identityProviderClient *client.CognitoIdentityProvider,
 ) *Server {

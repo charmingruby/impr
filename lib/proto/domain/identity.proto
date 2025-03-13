@@ -11,6 +11,7 @@ message VerifyTokenPayload {
 message VerifyTokenResponse {
     string id = 1;
     bool is_valid = 2;
+    string account_id = 3;
 }
 
 service IdentityService{

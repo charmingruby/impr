@@ -2,12 +2,14 @@ package endpoint
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/validation"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/middleware"
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
@@ -19,12 +21,14 @@ type VoteOnPollRequest struct {
 func (e *Endpoint) makeVoteOnPollEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		pollID := c.Param("poll_id")
-
 		if pollID == "" {
 			return rest.NewBadRequestResponse(c, "poll_id is required")
 		}
 
-		hardCodedSampleUserID := "sample-id"
+		accountID := fmt.Sprintf("%v", c.Get(middleware.ACCOUNT_ID_KEY))
+		if accountID == "" {
+			return rest.NewUnauthorizedErrorResponse(c, "invalid or expired token")
+		}
 
 		req := new(VoteOnPollRequest)
 
@@ -39,7 +43,7 @@ func (e *Endpoint) makeVoteOnPollEndpoint() echo.HandlerFunc {
 		voteID, err := e.service.VoteOnPoll(service.VoteOnPollParams{
 			PollID:       pollID,
 			PollOptionID: req.OptionID,
-			UserID:       hardCodedSampleUserID,
+			UserID:       accountID,
 		})
 
 		if err != nil {

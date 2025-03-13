@@ -8,13 +8,15 @@ import (
 )
 
 type environment struct {
-	ServerPort       string `env:"SERVER_PORT,required"`
-	ServerHost       string `env:"SERVER_HOST,required"`
-	DatabaseUser     string `env:"DATABASE_USER,required"`
-	DatabasePassword string `env:"DATABASE_PASSWORD,required"`
-	DatabaseHost     string `env:"DATABASE_HOST,required"`
-	DatabaseName     string `env:"DATABASE_NAME,required"`
-	DatabaseSSL      string `env:"DATABASE_SSL,required"`
+	ServerPort             string `env:"SERVER_PORT,required"`
+	ServerHost             string `env:"SERVER_HOST,required"`
+	IdentityGRPCServerPort string `env:"IDENTITY_GRPC_SERVER_PORT,required"`
+	IdentityGRPCServerHost string `env:"IDENTITY_GRPC_SERVER_HOST,required"`
+	DatabaseUser           string `env:"DATABASE_USER,required"`
+	DatabasePassword       string `env:"DATABASE_PASSWORD,required"`
+	DatabaseHost           string `env:"DATABASE_HOST,required"`
+	DatabaseName           string `env:"DATABASE_NAME,required"`
+	DatabaseSSL            string `env:"DATABASE_SSL,required"`
 }
 
 func New() (Config, error) {
@@ -32,6 +34,10 @@ func New() (Config, error) {
 			Port: environment.ServerPort,
 			Host: environment.ServerHost,
 		},
+		IdentityIntegration: identityIntegrationConfig{
+			Port: environment.IdentityGRPCServerPort,
+			Host: environment.IdentityGRPCServerHost,
+		},
 		Postgres: postgresConfig{
 			User:         environment.DatabaseUser,
 			Password:     environment.DatabasePassword,
@@ -45,11 +51,17 @@ func New() (Config, error) {
 }
 
 type Config struct {
-	Server   serverConfig
-	Postgres postgresConfig
+	Server              serverConfig
+	IdentityIntegration identityIntegrationConfig
+	Postgres            postgresConfig
 }
 
 type serverConfig struct {
+	Host string
+	Port string
+}
+
+type identityIntegrationConfig struct {
 	Host string
 	Port string
 }

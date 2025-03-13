@@ -56,6 +56,8 @@ func main() {
 
 		grpcAddr := fmt.Sprintf("%s:%s", cfg.Server.GRPCHost, cfg.Server.GRPCPort)
 
+		println("grpcAddr", grpcAddr)
+
 		lis, err := net.Listen("tcp", grpcAddr)
 		if err != nil {
 			logger.Log.Error(err.Error())
@@ -64,7 +66,7 @@ func main() {
 
 		server := grpc.NewServer()
 
-		grpcSvc.NewServer(server, identityProviderClient).Register()
+		grpcSvc.New(server, identityProviderClient).Register()
 
 		reflection.Register(server)
 

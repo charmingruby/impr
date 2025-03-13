@@ -2,11 +2,13 @@ package endpoint
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/middleware"
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/labstack/echo/v4"
 )
@@ -14,16 +16,18 @@ import (
 func (e *Endpoint) makeClosePollEndpoint() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		pollID := c.Param("poll_id")
-
 		if pollID == "" {
 			return rest.NewBadRequestResponse(c, "poll_id is required")
 		}
 
-		hardCodedSampleUserID := "sample-id"
+		accountID := fmt.Sprintf("%v", c.Get(middleware.ACCOUNT_ID_KEY))
+		if accountID == "" {
+			return rest.NewUnauthorizedErrorResponse(c, "invalid or expired token")
+		}
 
 		err := e.service.ClosePoll(service.ClosePollParams{
 			PollID:  pollID,
-			OwnerID: hardCodedSampleUserID,
+			OwnerID: accountID,
 		})
 
 		if err != nil {

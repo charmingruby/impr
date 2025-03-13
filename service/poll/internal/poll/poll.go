@@ -5,6 +5,7 @@ import (
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
 	"github.com/charmingruby/impr/service/poll/internal/poll/database/postgres"
 	"github.com/charmingruby/impr/service/poll/internal/poll/transport/rest/endpoint"
+	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/middleware"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
@@ -29,6 +30,6 @@ func NewService(
 	return service.New(pollRepo, optionRepo, voteRepo)
 }
 
-func NewRestHandler(r *echo.Echo, svc *service.Service) *endpoint.Endpoint {
-	return endpoint.New(r, svc)
+func NewRestHandler(r *echo.Echo, svc *service.Service, mw *middleware.Auth) *endpoint.Endpoint {
+	return endpoint.New(r, svc, mw)
 }

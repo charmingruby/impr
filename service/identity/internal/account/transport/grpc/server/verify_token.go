@@ -10,7 +10,8 @@ import (
 )
 
 func (s *Service) VerifyToken(ctx context.Context, payload *pb.VerifyTokenPayload) (*pb.VerifyTokenResponse, error) {
-	if _, err := s.identityProviderClient.RetrieveUserAttributesFromToken(payload.Token); err != nil {
+	result, err := s.identityProviderClient.RetrieveUserAttributesFromToken(payload.Token)
+	if err != nil {
 		return &pb.VerifyTokenResponse{
 			Id:      id.New(),
 			IsValid: false,
@@ -18,7 +19,8 @@ func (s *Service) VerifyToken(ctx context.Context, payload *pb.VerifyTokenPayloa
 	}
 
 	return &pb.VerifyTokenResponse{
-		Id:      id.New(),
-		IsValid: true,
+		Id:        id.New(),
+		IsValid:   true,
+		AccountId: result.ID,
 	}, nil
 }
