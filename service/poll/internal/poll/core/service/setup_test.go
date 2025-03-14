@@ -3,6 +3,8 @@ package service
 import (
 	"testing"
 
+	"github.com/charmingruby/impr/lib/pkg/messaging"
+	msgMemory "github.com/charmingruby/impr/lib/pkg/messaging/memory"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 	"github.com/charmingruby/impr/service/poll/test/memory"
 	"github.com/stretchr/testify/suite"
@@ -14,6 +16,7 @@ type Suite struct {
 	pollRepo   *memory.PollRepository
 	optionRepo *memory.PollOptionRepository
 	voteRepo   *memory.VoteRepository
+	publisher  *msgMemory.Publisher
 	svc        *Service
 }
 
@@ -21,7 +24,8 @@ func (s *Suite) SetupTest() {
 	s.pollRepo = memory.NewPollRepository()
 	s.optionRepo = memory.NewPollOptionRepository()
 	s.voteRepo = memory.NewVoteRepository()
-	s.svc = New(s.pollRepo, s.optionRepo, s.voteRepo)
+	s.publisher = msgMemory.NewPublisher()
+	s.svc = New(s.pollRepo, s.optionRepo, s.voteRepo, s.publisher)
 }
 
 func (s *Suite) SetupSubTest() {
@@ -33,6 +37,9 @@ func (s *Suite) SetupSubTest() {
 
 	s.voteRepo.Items = []model.Vote{}
 	s.voteRepo.IsHealthy = true
+
+	s.publisher.IsHealthy = true
+	s.publisher.Messages = []messaging.Message{}
 }
 
 func TestSuite(t *testing.T) {

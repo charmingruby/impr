@@ -25,6 +25,7 @@ func (s *Suite) Test_Service_ClosePoll() {
 
 		s.NoError(err)
 		s.Equal(s.pollRepo.Items[0].Status, model.POLL_CLOSED_STATUS)
+		s.Equal(len(s.publisher.Messages), 1)
 	})
 
 	s.Run("should return an error if poll is already closed", func() {
@@ -44,6 +45,7 @@ func (s *Suite) Test_Service_ClosePoll() {
 
 		s.Error(err)
 		s.Equal(custom_err.NewInvalidActionErr("poll is already closed").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 
 	s.Run("should return an error if poll doesn't exists", func() {
@@ -54,5 +56,6 @@ func (s *Suite) Test_Service_ClosePoll() {
 
 		s.Error(err)
 		s.Equal(core_err.NewResourceNotFoundErr("poll").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 }

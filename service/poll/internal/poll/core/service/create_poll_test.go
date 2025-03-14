@@ -26,6 +26,7 @@ func (s *Suite) Test_Service_CreatePoll() {
 		s.Equal(2, len(s.optionRepo.Items))
 		s.Equal(s.optionRepo.Items[0].Content, params.Options[0])
 		s.Equal(s.optionRepo.Items[1].Content, params.Options[1])
+		s.Equal(len(s.publisher.Messages), 1)
 	})
 
 	s.Run("should return an error if poll already exists", func() {
@@ -46,6 +47,7 @@ func (s *Suite) Test_Service_CreatePoll() {
 
 		s.Error(err)
 		s.Equal(core_err.NewConflictErr("title").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 
 	s.Run("should return an error if option already exists", func() {
@@ -71,5 +73,6 @@ func (s *Suite) Test_Service_CreatePoll() {
 		)
 
 		s.Equal(multipleErr.Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 }

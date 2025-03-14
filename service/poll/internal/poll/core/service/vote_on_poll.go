@@ -1,7 +1,13 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
+	"github.com/charmingruby/impr/lib/pkg/core/id"
+	"github.com/charmingruby/impr/lib/pkg/messaging"
+	"github.com/charmingruby/impr/service/poll/internal/poll/core/event"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
 )
@@ -55,6 +61,23 @@ func (s *Service) VoteOnPoll(params VoteOnPollParams) (string, error) {
 
 	if err := s.voteRepo.Store(vote); err != nil {
 		return "", custom_err.NewPersistenceErr(err, "store", "vote")
+	}
+
+	msg, err := event.CreateAuditMessage(event.CreateAuditMessageParams{
+		Context:      "vote",
+		Subject:      "vote submited",
+		Content:      fmt.Sprintf("%s submited vote: %s, on poll: %s", poll.OwnerID, params.PollOptionID, poll.ID),
+		DispatchedAt: time.Now(),
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if err := s.publisher.Publish(messaging.Message{
+		Key:   id.New(),
+		Value: msg,
+	}); err != nil {
+		return "", err
 	}
 
 	return vote.ID, nil

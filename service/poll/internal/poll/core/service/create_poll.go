@@ -1,7 +1,13 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
+	"github.com/charmingruby/impr/lib/pkg/core/id"
+	"github.com/charmingruby/impr/lib/pkg/messaging"
+	"github.com/charmingruby/impr/service/poll/internal/poll/core/event"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
 )
@@ -75,6 +81,23 @@ func (s *Service) CreatePoll(params CreatePollParams) (string, error) {
 
 	if len(optionsErrs) > 0 {
 		return "", custom_err.NewMultipleProcessErr(optionsErrs)
+	}
+
+	msg, err := event.CreateAuditMessage(event.CreateAuditMessageParams{
+		Context:      "poll",
+		Subject:      "poll created",
+		Content:      fmt.Sprintf("%s created new poll: %s", poll.OwnerID, poll.ID),
+		DispatchedAt: time.Now(),
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if err := s.publisher.Publish(messaging.Message{
+		Key:   id.New(),
+		Value: msg,
+	}); err != nil {
+		return "", err
 	}
 
 	return poll.ID, nil

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
+	"github.com/charmingruby/impr/lib/pkg/messaging/kafka"
 	"github.com/charmingruby/impr/service/poll/config"
 	"github.com/charmingruby/impr/service/poll/internal/poll"
 	"github.com/charmingruby/impr/service/poll/internal/shared/transport/grpc/client"
@@ -79,7 +80,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := poll.NewService(pollRepo, optionRepo, voteRepo)
+	logger.Log.Info("Connection to Kafka...")
+
+	publisher, err := kafka.NewPublisher(cfg.Kafka.BrokerURL, cfg.Kafka.CreateAuditTopic)
+	if err != nil {
+		logger.Log.Error(err.Error())
+
+		os.Exit(1)
+	}
+
+	logger.Log.Info("Connected to Kafka successfully!")
+
+	svc := poll.NewService(pollRepo, optionRepo, voteRepo, publisher)
 
 	router := echo.New()
 

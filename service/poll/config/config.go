@@ -17,6 +17,9 @@ type environment struct {
 	DatabaseHost           string `env:"DATABASE_HOST,required"`
 	DatabaseName           string `env:"DATABASE_NAME,required"`
 	DatabaseSSL            string `env:"DATABASE_SSL,required"`
+	KafkaBrokerURL         string `env:"KAFKA_BROKER_URL,required"`
+	KafkaGroupID           string `env:"KAFKA_GROUP_ID,required"`
+	KafkaCreateAuditTopic  string `env:"KAFKA_CREATE_AUDIT_TOPIC,required"`
 }
 
 func New() (Config, error) {
@@ -45,6 +48,11 @@ func New() (Config, error) {
 			DatabaseName: environment.DatabaseName,
 			SSL:          environment.DatabaseSSL,
 		},
+		Kafka: kafkaConfig{
+			BrokerURL:        environment.KafkaBrokerURL,
+			GroupID:          environment.KafkaGroupID,
+			CreateAuditTopic: environment.KafkaCreateAuditTopic,
+		},
 	}
 
 	return cfg, nil
@@ -54,6 +62,7 @@ type Config struct {
 	Server              serverConfig
 	IdentityIntegration identityIntegrationConfig
 	Postgres            postgresConfig
+	Kafka               kafkaConfig
 }
 
 type serverConfig struct {
@@ -64,6 +73,13 @@ type serverConfig struct {
 type identityIntegrationConfig struct {
 	Host string
 	Port string
+}
+
+type kafkaConfig struct {
+	BrokerURL string
+	GroupID   string
+
+	CreateAuditTopic string
 }
 
 type postgresConfig struct {

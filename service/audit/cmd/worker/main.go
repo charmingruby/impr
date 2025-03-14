@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/messaging/kafka"
 	"github.com/charmingruby/impr/service/audit/config"
 	"github.com/charmingruby/impr/service/audit/internal/audit/core/event"
@@ -12,7 +10,6 @@ import (
 	"github.com/charmingruby/impr/service/audit/internal/audit/database/mongodb"
 	"github.com/charmingruby/impr/service/audit/pkg/logger"
 	mongoConn "github.com/charmingruby/impr/service/audit/pkg/mongodb"
-	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -51,16 +48,6 @@ func main() {
 	go event.HandleCreateAudit(ctx, createAuditSubscriber, svc)
 
 	logger.Log.Info("Listening to Kafka messages...")
-
-	router := echo.New()
-
-	restServer := rest.New(router, cfg.Server.Host, cfg.Server.Port)
-
-	logger.Log.Info(fmt.Sprintf("Rest server is running at: %s:%s ...", cfg.Server.Host, cfg.Server.Port))
-
-	if err := restServer.Start(); err != nil {
-		panic(err)
-	}
 
 	select {}
 }

@@ -34,6 +34,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 		s.Equal("valid-user-id", s.voteRepo.Items[0].UserID)
 		s.Equal(poll.ID, s.voteRepo.Items[0].PollID)
 		s.Equal(opt.ID, s.voteRepo.Items[0].PollOptionID)
+		s.Equal(len(s.publisher.Messages), 1)
 	})
 
 	s.Run("should return an error if poll doesn't exists", func() {
@@ -55,6 +56,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.Error(err)
 		s.Equal(core_err.NewResourceNotFoundErr("poll").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 
 	s.Run("should return an error if option doesn't exists", func() {
@@ -71,6 +73,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.Error(err)
 		s.Equal(core_err.NewResourceNotFoundErr("poll option").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 
 	s.Run("should return an error if user already voted on poll", func() {
@@ -106,6 +109,7 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.Error(err)
 		s.Equal(custom_err.NewInvalidActionErr("vote already exists").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 
 	s.Run("should return error if poll is closed", func() {
@@ -132,5 +136,6 @@ func (s *Suite) Test_Service_VoteOnPoll() {
 
 		s.Error(err)
 		s.Equal(custom_err.NewInvalidActionErr("poll is not open").Error(), err.Error())
+		s.Equal(len(s.publisher.Messages), 0)
 	})
 }
