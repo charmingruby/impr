@@ -25,7 +25,7 @@ func pollQueries() map[string]string {
 		findPollByTitleAndOwnerID: `SELECT * FROM polls
 		WHERE title = $1 AND owner_id = $2`,
 		createPoll: `INSERT INTO polls
-		(id, title, question, status, expiration_time, owner_id)
+		(id, title, question, status, expiration_periods, owner_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING *`,
 		updatePoll: `UPDATE polls
@@ -80,7 +80,7 @@ func (r *PollRepository) Store(model *model.Poll) error {
 		model.Title,
 		model.Question,
 		model.Status,
-		model.ExpirationTime,
+		model.ExpirationPeriods,
 		model.OwnerID,
 	); err != nil {
 		return custom_err.NewPersistenceErr(err, "poll store", "postgres")

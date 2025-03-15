@@ -15,10 +15,10 @@ import (
 )
 
 type CreatePollRequest struct {
-	Title              string   `json:"title" validate:"required,min=3,max=144"`
-	Question           string   `json:"question" validate:"required,min=3,max=144"`
-	ExpirationTimeInMS int      `json:"expiration_time_in_ms" validate:"required,min=1"`
-	Options            []string `json:"options" validate:"required,min=2"`
+	Title             string   `json:"title" validate:"required,min=3,max=144"`
+	Question          string   `json:"question" validate:"required,min=3,max=144"`
+	ExpirationPeriods int      `json:"expiration_periods" validate:"required,min=1"`
+	Options           []string `json:"options" validate:"required,min=2"`
 }
 
 func (e *Endpoint) makeCreatePollEndpoint() echo.HandlerFunc {
@@ -39,11 +39,11 @@ func (e *Endpoint) makeCreatePollEndpoint() echo.HandlerFunc {
 		}
 
 		pollID, err := e.service.CreatePoll(service.CreatePollParams{
-			Title:              req.Title,
-			Question:           req.Question,
-			ExpirationTimeInMS: req.ExpirationTimeInMS,
-			OwnerID:            accountID,
-			Options:            req.Options,
+			Title:             req.Title,
+			Question:          req.Question,
+			ExpirationPeriods: req.ExpirationPeriods,
+			OwnerID:           accountID,
+			Options:           req.Options,
 		})
 
 		if err != nil {

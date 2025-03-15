@@ -10,11 +10,11 @@ import (
 func (s *Suite) Test_Service_CreatePoll() {
 	s.Run("should create a poll and options without errors", func() {
 		params := CreatePollParams{
-			Title:              "Color decision",
-			Question:           "What is your favorite color?",
-			OwnerID:            "owner-id",
-			ExpirationTimeInMS: 15 * 60 * 1000, // 15 minutes in ms
-			Options:            []string{"Red", "Green"},
+			Title:             "Color decision",
+			Question:          "What is your favorite color?",
+			OwnerID:           "owner-id",
+			ExpirationPeriods: 1,
+			Options:           []string{"Red", "Green"},
 		}
 
 		pollID, err := s.svc.CreatePoll(params)
@@ -36,11 +36,11 @@ func (s *Suite) Test_Service_CreatePoll() {
 		s.NoError(err)
 
 		params := CreatePollParams{
-			Title:              conflictingPoll.Title,
-			Question:           "What is your favorite color?",
-			OwnerID:            conflictingPoll.OwnerID,
-			ExpirationTimeInMS: 15 * 60 * 1000, // 15 minutes in ms
-			Options:            []string{"Red", "Green"},
+			Title:             conflictingPoll.Title,
+			Question:          "What is your favorite color?",
+			OwnerID:           conflictingPoll.OwnerID,
+			ExpirationPeriods: 1,
+			Options:           []string{"Red", "Green"},
 		}
 
 		_, err = s.svc.CreatePoll(params)
@@ -52,11 +52,11 @@ func (s *Suite) Test_Service_CreatePoll() {
 
 	s.Run("should return an error if option already exists", func() {
 		params := CreatePollParams{
-			Title:              "Color decision",
-			Question:           "What is your favorite color?",
-			OwnerID:            "owner-id",
-			ExpirationTimeInMS: 15 * 60 * 1000, // 15 minutes in ms
-			Options:            []string{"Red", "Red"},
+			Title:             "Color decision",
+			Question:          "What is your favorite color?",
+			OwnerID:           "owner-id",
+			ExpirationPeriods: 1,
+			Options:           []string{"Red", "Red"},
 		}
 
 		_, err := s.svc.CreatePoll(params)
