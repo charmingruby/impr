@@ -3,6 +3,7 @@ package endpoint
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
@@ -15,10 +16,10 @@ import (
 )
 
 type CreatePollRequest struct {
-	Title             string   `json:"title" validate:"required,min=3,max=144"`
-	Question          string   `json:"question" validate:"required,min=3,max=144"`
-	ExpirationPeriods int      `json:"expiration_periods" validate:"required,min=1"`
-	Options           []string `json:"options" validate:"required,min=2"`
+	Title     string   `json:"title" validate:"required,min=3,max=144"`
+	Question  string   `json:"question" validate:"required,min=3,max=144"`
+	ExpiresAt string   `json:"expires_at" `
+	Options   []string `json:"options" validate:"required,min=2"`
 }
 
 func (e *Endpoint) makeCreatePollEndpoint() echo.HandlerFunc {
@@ -38,12 +39,22 @@ func (e *Endpoint) makeCreatePollEndpoint() echo.HandlerFunc {
 			return rest.NewPayloadErrorResponse(c, err.Error())
 		}
 
+		var expiresAt *time.Time
+		if req.ExpiresAt != "" {
+			parsedTime, err := time.Parse(time.RFC3339, req.ExpiresAt)
+			if err != nil {
+				return rest.NewPayloadErrorResponse(c, "invalid expires_at format, expected RFC3339")
+			}
+
+			expiresAt = &parsedTime
+		}
+
 		pollID, err := e.service.CreatePoll(service.CreatePollParams{
-			Title:             req.Title,
-			Question:          req.Question,
-			ExpirationPeriods: req.ExpirationPeriods,
-			OwnerID:           accountID,
-			Options:           req.Options,
+			Title:     req.Title,
+			Question:  req.Question,
+			ExpiresAt: expiresAt,
+			OwnerID:   accountID,
+			Options:   req.Options,
 		})
 
 		if err != nil {

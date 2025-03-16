@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/charmingruby/impr/lib/pkg/core/core_err"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
@@ -9,12 +11,14 @@ import (
 
 func (s *Suite) Test_Service_CreatePoll() {
 	s.Run("should create a poll and options without errors", func() {
+		now := time.Now().Add(5 * time.Minute)
+
 		params := CreatePollParams{
-			Title:             "Color decision",
-			Question:          "What is your favorite color?",
-			OwnerID:           "owner-id",
-			ExpirationPeriods: 1,
-			Options:           []string{"Red", "Green"},
+			Title:     "Color decision",
+			Question:  "What is your favorite color?",
+			OwnerID:   "owner-id",
+			ExpiresAt: &now,
+			Options:   []string{"Red", "Green"},
 		}
 
 		pollID, err := s.svc.CreatePoll(params)
@@ -30,17 +34,19 @@ func (s *Suite) Test_Service_CreatePoll() {
 	})
 
 	s.Run("should return an error if poll already exists", func() {
+		now := time.Now().Add(5 * time.Minute)
+
 		conflictingPoll := factory.MakePoll(model.Poll{})
 
 		err := s.pollRepo.Store(&conflictingPoll)
 		s.NoError(err)
 
 		params := CreatePollParams{
-			Title:             conflictingPoll.Title,
-			Question:          "What is your favorite color?",
-			OwnerID:           conflictingPoll.OwnerID,
-			ExpirationPeriods: 1,
-			Options:           []string{"Red", "Green"},
+			Title:     conflictingPoll.Title,
+			Question:  "What is your favorite color?",
+			OwnerID:   conflictingPoll.OwnerID,
+			ExpiresAt: &now,
+			Options:   []string{"Red", "Green"},
 		}
 
 		_, err = s.svc.CreatePoll(params)
@@ -51,12 +57,14 @@ func (s *Suite) Test_Service_CreatePoll() {
 	})
 
 	s.Run("should return an error if option already exists", func() {
+		now := time.Now().Add(5 * time.Minute)
+
 		params := CreatePollParams{
-			Title:             "Color decision",
-			Question:          "What is your favorite color?",
-			OwnerID:           "owner-id",
-			ExpirationPeriods: 1,
-			Options:           []string{"Red", "Red"},
+			Title:     "Color decision",
+			Question:  "What is your favorite color?",
+			OwnerID:   "owner-id",
+			ExpiresAt: &now,
+			Options:   []string{"Red", "Red"},
 		}
 
 		_, err := s.svc.CreatePoll(params)

@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 	"github.com/charmingruby/impr/service/poll/internal/shared/custom_err"
@@ -9,11 +10,12 @@ import (
 )
 
 const (
-	findPollByID              = "find poll by id"
-	findPollByIDAndOwnerID    = "find poll by id and owner id"
-	findPollByTitleAndOwnerID = "find poll by title and owner id"
-	createPoll                = "create poll"
-	updatePoll                = "update poll"
+	findPollByID                       = "find poll by id"
+	findPollByIDAndOwnerID             = "find poll by id and owner id"
+	findPollByTitleAndOwnerID          = "find poll by title and owner id"
+	findAllOPollsWithInferiorExpiresAt = "find all polls with inferior expires at"
+	createPoll                         = "create poll"
+	updatePoll                         = "update poll"
 )
 
 func pollQueries() map[string]string {
@@ -24,8 +26,10 @@ func pollQueries() map[string]string {
 		WHERE id = $1 AND owner_id = $2`,
 		findPollByTitleAndOwnerID: `SELECT * FROM polls
 		WHERE title = $1 AND owner_id = $2`,
+		findAllOPollsWithInferiorExpiresAt: `SELECT * FROM polls
+		WHERE expires_at < $1`,
 		createPoll: `INSERT INTO polls
-		(id, title, question, status, expiration_periods, owner_id)
+		(id, title, question, status, expires_at, owner_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING *`,
 		updatePoll: `UPDATE polls
@@ -80,7 +84,7 @@ func (r *PollRepository) Store(model *model.Poll) error {
 		model.Title,
 		model.Question,
 		model.Status,
-		model.ExpirationPeriods,
+		model.ExpiresAt,
 		model.OwnerID,
 	); err != nil {
 		return custom_err.NewPersistenceErr(err, "poll store", "postgres")
@@ -105,6 +109,24 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 	}
 
 	return &model, nil
+}
+
+func (r *PollRepository) FindAllWithInferiorExpiresAt(expiresAt time.Time) ([]model.Poll, error) {
+	stmt, err := r.statement(findAllOPollsWithInferiorExpiresAt)
+	if err != nil {
+		return nil, err
+	}
+
+	var models []model.Poll
+	if err := stmt.Select(&models, expiresAt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, custom_err.NewPersistenceErr(err, "poll find_all_with_inferior_expires_at", "postgres")
+	}
+
+	return models, nil
 }
 
 func (r *PollRepository) FindByIDAndOwnerID(id, ownerID string) (*model.Poll, error) {

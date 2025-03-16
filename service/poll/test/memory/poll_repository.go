@@ -2,6 +2,7 @@ package memory
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
 )
@@ -30,6 +31,22 @@ func (r *PollRepository) FindByID(id string) (*model.Poll, error) {
 	}
 
 	return nil, nil
+}
+
+func (r *PollRepository) FindAllWithInferiorExpiresAt(expiresAt time.Time) ([]model.Poll, error) {
+	var polls []model.Poll
+
+	for _, item := range r.Items {
+		if item.ExpiresAt.Before(expiresAt) {
+			polls = append(polls, item)
+		}
+	}
+
+	if !r.IsHealthy {
+		return nil, fmt.Errorf("poll datasource is unhealthy")
+	}
+
+	return polls, nil
 }
 
 func (r *PollRepository) FindByTitleAndOwnerID(title, ownerID string) (*model.Poll, error) {

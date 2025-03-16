@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS polls
     title varchar NOT NULL,
     question text,
 	status varchar NOT NULL,
-    expiration_periods integer NOT NULL,
+    expires_at TIMESTAMP NULL,
     owner_id varchar NOT NULL,
     created_at timestamp DEFAULT now() NOT NULL,
     updated_at timestamp DEFAULT now() NOT NULL

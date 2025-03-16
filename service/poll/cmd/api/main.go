@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/charmingruby/impr/lib/pkg/http/server/rest"
 	"github.com/charmingruby/impr/lib/pkg/messaging/kafka"
@@ -14,6 +15,7 @@ import (
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/charmingruby/impr/service/poll/pkg/postgres"
 	"github.com/labstack/echo/v4"
+	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -92,6 +94,16 @@ func main() {
 	logger.Log.Info("Connected to Kafka successfully!")
 
 	svc := poll.NewService(pollRepo, optionRepo, voteRepo, publisher)
+
+	c := cron.New(cron.WithSeconds())
+	c.AddFunc("*/30 * * * * *", func() {
+		logger.Log.Info(fmt.Sprintf("CronJob: Closing expired polls at %s", time.Now().String()))
+
+		if err := svc.CloseExpiredPolls(); err != nil {
+			logger.Log.Error(err.Error())
+		}
+	})
+	c.Start()
 
 	router := echo.New()
 

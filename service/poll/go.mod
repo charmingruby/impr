@@ -4,16 +4,20 @@ go 1.23.2
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1
-	github.com/charmingruby/impr/lib v0.0.0-20250310134625-d579bc10f3ac
+	github.com/charmingruby/impr/lib v0.0.0-20250315200720-c818b3e38fe4
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/lib/pq v1.10.9
 	github.com/oklog/ulid/v2 v2.1.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/stretchr/testify v1.10.0
+	google.golang.org/grpc v1.64.1
+	google.golang.org/protobuf v1.33.0
 )
 
 require (
+	github.com/confluentinc/confluent-kafka-go/v2 v2.8.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -30,5 +34,6 @@ require (
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

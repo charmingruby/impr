@@ -13,11 +13,11 @@ import (
 )
 
 type CreatePollParams struct {
-	Title             string
-	Question          string
-	ExpirationPeriods int
-	OwnerID           string
-	Options           []string
+	Title     string
+	Question  string
+	ExpiresAt *time.Time
+	OwnerID   string
+	Options   []string
 }
 
 func (s *Service) CreatePoll(params CreatePollParams) (string, error) {
@@ -32,10 +32,10 @@ func (s *Service) CreatePoll(params CreatePollParams) (string, error) {
 	}
 
 	poll := model.NewPoll(model.NewPollInput{
-		Title:             params.Title,
-		Question:          params.Question,
-		OwnerID:           params.OwnerID,
-		ExpirationPeriods: params.ExpirationPeriods,
+		Title:     params.Title,
+		Question:  params.Question,
+		OwnerID:   params.OwnerID,
+		ExpiresAt: params.ExpiresAt,
 	})
 
 	if err := s.pollRepo.Store(poll); err != nil {

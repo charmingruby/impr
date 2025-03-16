@@ -20,7 +20,7 @@ func HandleCreateAudit(ctx context.Context, queue messaging.Subscriber, svc *ser
 			return err
 		}
 
-		logger.Log.Info(fmt.Sprintf("processing %s event: id=%s", params.Subject, msg.Key))
+		logger.Log.Info(fmt.Sprintf("processing %s event: id=%s", params.Subject, params.Id))
 
 		if err := svc.CreateAudit(service.CreateAuditParams{
 			Context:      params.Context,
@@ -31,7 +31,7 @@ func HandleCreateAudit(ctx context.Context, queue messaging.Subscriber, svc *ser
 			return err
 		}
 
-		logger.Log.Info(fmt.Sprintf("processed %s event: id=%s", params.Subject, msg.Key))
+		logger.Log.Info(fmt.Sprintf("processed %s event: id=%s", params.Subject, params.Id))
 
 		return nil
 	})

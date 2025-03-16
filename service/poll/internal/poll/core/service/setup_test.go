@@ -6,6 +6,7 @@ import (
 	"github.com/charmingruby/impr/lib/pkg/messaging"
 	msgMemory "github.com/charmingruby/impr/lib/pkg/messaging/memory"
 	"github.com/charmingruby/impr/service/poll/internal/poll/core/model"
+	"github.com/charmingruby/impr/service/poll/pkg/logger"
 	"github.com/charmingruby/impr/service/poll/test/memory"
 	"github.com/stretchr/testify/suite"
 )
@@ -21,6 +22,7 @@ type Suite struct {
 }
 
 func (s *Suite) SetupTest() {
+	logger.New()
 	s.pollRepo = memory.NewPollRepository()
 	s.optionRepo = memory.NewPollOptionRepository()
 	s.voteRepo = memory.NewVoteRepository()
