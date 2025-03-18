@@ -14,11 +14,12 @@ import (
 type Suite struct {
 	suite.Suite
 
-	pollRepo   *memory.PollRepository
-	optionRepo *memory.PollOptionRepository
-	voteRepo   *memory.VoteRepository
-	publisher  *msgMemory.Publisher
-	svc        *Service
+	pollRepo    *memory.PollRepository
+	optionRepo  *memory.PollOptionRepository
+	voteRepo    *memory.VoteRepository
+	summaryRepo *memory.PollSummaryRepository
+	publisher   *msgMemory.Publisher
+	svc         *Service
 }
 
 func (s *Suite) SetupTest() {
@@ -26,8 +27,9 @@ func (s *Suite) SetupTest() {
 	s.pollRepo = memory.NewPollRepository()
 	s.optionRepo = memory.NewPollOptionRepository()
 	s.voteRepo = memory.NewVoteRepository()
+	s.summaryRepo = memory.NewPollSummaryRepository()
 	s.publisher = msgMemory.NewPublisher()
-	s.svc = New(s.pollRepo, s.optionRepo, s.voteRepo, s.publisher)
+	s.svc = New(s.pollRepo, s.optionRepo, s.voteRepo, s.summaryRepo, s.publisher)
 }
 
 func (s *Suite) SetupSubTest() {
@@ -42,6 +44,10 @@ func (s *Suite) SetupSubTest() {
 
 	s.publisher.IsHealthy = true
 	s.publisher.Messages = []messaging.Message{}
+
+	s.summaryRepo.Polls = []model.Poll{}
+	s.summaryRepo.Options = []model.PollOption{}
+	s.summaryRepo.Votes = []model.Vote{}
 }
 
 func TestSuite(t *testing.T) {

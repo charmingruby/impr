@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "lib/proto/gen/pb";
+
+import "google/protobuf/timestamp.proto";
+
+message PollPayload {
+    string poll_id = 1;
+}
+
+message PollOption {
+    string id = 1;
+    string content = 2;
+    int32 vote_count = 3;
+}
+
+message PollResponse {
+    string poll_id = 1;
+    repeated PollOption options = 2;
+    google.protobuf.Timestamp expires_at = 3;
+}
+
+service PollService{
+    rpc StreamPollResults(PollPayload) returns (stream PollResponse);
+}

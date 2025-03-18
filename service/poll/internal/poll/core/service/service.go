@@ -6,22 +6,25 @@ import (
 )
 
 type Service struct {
-	pollRepo   repository.PollRepository
-	optionRepo repository.PollOptionRepository
-	voteRepo   repository.VoteRepository
-	publisher  messaging.Publisher
+	pollRepo    repository.PollRepository
+	optionRepo  repository.PollOptionRepository
+	voteRepo    repository.VoteRepository
+	summaryRepo repository.PollSummaryRepository
+	publisher   messaging.Publisher
 }
 
 func New(
 	pollRepo repository.PollRepository,
 	optionRepo repository.PollOptionRepository,
 	voteRepo repository.VoteRepository,
+	summaryRepo repository.PollSummaryRepository,
 	publisher messaging.Publisher,
 ) *Service {
 	return &Service{
-		pollRepo:   pollRepo,
-		optionRepo: optionRepo,
-		voteRepo:   voteRepo,
-		publisher:  publisher,
+		pollRepo:    pollRepo,
+		optionRepo:  optionRepo,
+		voteRepo:    voteRepo,
+		summaryRepo: summaryRepo,
+		publisher:   publisher,
 	}
 }

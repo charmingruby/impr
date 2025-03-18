@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/charmingruby/impr/lib/pkg/messaging/kafka"
 	"github.com/charmingruby/impr/service/poll/config"
 	"github.com/charmingruby/impr/service/poll/internal/poll"
+	"github.com/charmingruby/impr/service/poll/internal/poll/core/service"
+	grpcSvc "github.com/charmingruby/impr/service/poll/internal/poll/transport/grpc/server"
 	"github.com/charmingruby/impr/service/poll/internal/shared/transport/grpc/client"
 	"github.com/charmingruby/impr/service/poll/internal/shared/transport/rest/middleware"
 	"github.com/charmingruby/impr/service/poll/pkg/logger"
@@ -18,6 +21,7 @@ import (
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -64,21 +68,24 @@ func main() {
 	pollRepo, err := poll.NewPollRepository(db)
 	if err != nil {
 		logger.Log.Error(err.Error())
-
 		os.Exit(1)
 	}
 
 	optionRepo, err := poll.NewPollOptionRepository(db)
 	if err != nil {
 		logger.Log.Error(err.Error())
-
 		os.Exit(1)
 	}
 
 	voteRepo, err := poll.NewVoteRepository(db)
 	if err != nil {
 		logger.Log.Error(err.Error())
+		os.Exit(1)
+	}
 
+	summaryRepo, err := poll.NewPollSumaryRepository(db)
+	if err != nil {
+		logger.Log.Error(err.Error())
 		os.Exit(1)
 	}
 
@@ -87,23 +94,14 @@ func main() {
 	publisher, err := kafka.NewPublisher(cfg.Kafka.BrokerURL, cfg.Kafka.CreateAuditTopic)
 	if err != nil {
 		logger.Log.Error(err.Error())
-
 		os.Exit(1)
 	}
 
 	logger.Log.Info("Connected to Kafka successfully!")
 
-	svc := poll.NewService(pollRepo, optionRepo, voteRepo, publisher)
+	svc := poll.NewService(pollRepo, optionRepo, voteRepo, summaryRepo, publisher)
 
-	c := cron.New(cron.WithSeconds())
-	c.AddFunc("*/30 * * * * *", func() {
-		logger.Log.Info(fmt.Sprintf("CronJob: Closing expired polls at %s", time.Now().String()))
-
-		if err := svc.CloseExpiredPolls(); err != nil {
-			logger.Log.Error(err.Error())
-		}
-	})
-	c.Start()
+	closeExpiredPollsCronJob(30, svc)
 
 	router := echo.New()
 
@@ -111,15 +109,52 @@ func main() {
 
 	poll.NewRestHandler(router, svc, authMiddleware).Register()
 
-	restServer := rest.New(router, cfg.Server.Host, cfg.Server.Port)
+	restServer := rest.New(router, cfg.Server.RestHost, cfg.Server.RestPort)
 
 	go func() {
-		logger.Log.Info(fmt.Sprintf("Rest server is running at: %s:%s ...", cfg.Server.Host, cfg.Server.Port))
+		logger.Log.Info(fmt.Sprintf("Rest server is running at: %s:%s ...", cfg.Server.RestHost, cfg.Server.RestPort))
 
 		if err := restServer.Start(); err != nil {
 			os.Exit(1)
 		}
 	}()
 
+	go func() {
+		logger.Log.Info(fmt.Sprintf("gRPC server is running at: %s:%s ...", cfg.Server.GRPCHost, cfg.Server.GRPCPort))
+
+		grpcAddr := fmt.Sprintf("%s:%s", cfg.Server.GRPCHost, cfg.Server.GRPCPort)
+
+		lis, err := net.Listen("tcp", grpcAddr)
+		if err != nil {
+			logger.Log.Error(err.Error())
+			os.Exit(1)
+		}
+
+		server := grpc.NewServer()
+
+		grpcSvc.New(server, svc).Register()
+
+		reflection.Register(server)
+
+		if err := server.Serve(lis); err != nil {
+			logger.Log.Error(err.Error())
+			os.Exit(1)
+		}
+	}()
+
 	select {}
+}
+
+func closeExpiredPollsCronJob(delayInSeconds int, svc *service.Service) {
+	c := cron.New(cron.WithSeconds())
+
+	c.AddFunc(fmt.Sprintf("*/%d * * * * *", delayInSeconds), func() {
+		logger.Log.Info(fmt.Sprintf("CronJob: Closing expired polls at %s", time.Now().String()))
+
+		if err := svc.CloseExpiredPolls(); err != nil {
+			logger.Log.Error(err.Error())
+		}
+	})
+
+	c.Start()
 }

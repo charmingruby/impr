@@ -22,14 +22,18 @@ func NewPollOptionRepository(db *sqlx.DB) (repository.PollOptionRepository, erro
 func NewVoteRepository(db *sqlx.DB) (repository.VoteRepository, error) {
 	return postgres.NewVoteRepository(db)
 }
+func NewPollSumaryRepository(db *sqlx.DB) (repository.PollSummaryRepository, error) {
+	return postgres.NewSummaryRepository(db)
+}
 
 func NewService(
 	pollRepo repository.PollRepository,
 	optionRepo repository.PollOptionRepository,
 	voteRepo repository.VoteRepository,
+	summaryRepo repository.PollSummaryRepository,
 	publisher messaging.Publisher,
 ) *service.Service {
-	return service.New(pollRepo, optionRepo, voteRepo, publisher)
+	return service.New(pollRepo, optionRepo, voteRepo, summaryRepo, publisher)
 }
 
 func NewRestHandler(r *echo.Echo, svc *service.Service, mw *middleware.Auth) *endpoint.Endpoint {

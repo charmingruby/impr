@@ -8,8 +8,10 @@ import (
 )
 
 type environment struct {
-	ServerPort             string `env:"SERVER_PORT,required"`
-	ServerHost             string `env:"SERVER_HOST,required"`
+	RestServerPort         string `env:"REST_SERVER_PORT,required"`
+	RestServerHost         string `env:"REST_SERVER_HOST,required"`
+	GRPCServerPort         string `env:"GRPC_SERVER_PORT,required"`
+	GRPCServerHost         string `env:"GRPC_SERVER_HOST,required"`
 	IdentityGRPCServerPort string `env:"IDENTITY_GRPC_SERVER_PORT,required"`
 	IdentityGRPCServerHost string `env:"IDENTITY_GRPC_SERVER_HOST,required"`
 	DatabaseUser           string `env:"DATABASE_USER,required"`
@@ -34,8 +36,10 @@ func New() (Config, error) {
 
 	cfg := Config{
 		Server: serverConfig{
-			Port: environment.ServerPort,
-			Host: environment.ServerHost,
+			RestHost: environment.RestServerHost,
+			RestPort: environment.RestServerPort,
+			GRPCHost: environment.GRPCServerHost,
+			GRPCPort: environment.GRPCServerPort,
 		},
 		IdentityIntegration: identityIntegrationConfig{
 			Port: environment.IdentityGRPCServerPort,
@@ -66,8 +70,10 @@ type Config struct {
 }
 
 type serverConfig struct {
-	Host string
-	Port string
+	RestHost string
+	RestPort string
+	GRPCHost string
+	GRPCPort string
 }
 
 type identityIntegrationConfig struct {
